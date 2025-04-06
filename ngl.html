@@ -394,7 +394,7 @@
     <script>
         // Checking for current page
         const urlParams = new URLSearchParams(window.location.search);
-        const isAdmin = window.location.pathname.endsWith('admin.html');
+        const isAdmin = window.location.pathname.endsWith('admin-panel.html');
         const isNGL = window.location.pathname.endsWith('ngl.html') || window.location.pathname === '/';
         
         // Storage keys
@@ -404,7 +404,7 @@
         
         // Default data
         const defaultAdminData = {
-            username: 'BrianOfficial',
+            username: 'Brian',
             profileUrl: '/api/placeholder/80/80',
             password: 'briangila'
         };
