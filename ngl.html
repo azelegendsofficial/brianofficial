@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGL Anonymous Messages</title>
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --secondary: #3b82f6;
+            --text: #1f2937;
+            --bg: #f9fafb;
+            --card: #ffffff;
+            --gray: #9ca3af;
+            --red: #ef4444;
+            --green: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 16px;
+            border: 3px solid var(--primary);
+        }
+
+        .profile-info h1 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .profile-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .textarea {
+            width: 100%;
+            height: 150px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            resize: none;
+            transition: border-color 0.3s;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(124, 58, 237, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Login Styles */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Admin Panel */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            color: var(--gray);
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tab-header {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--gray);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        .settings-group {
+            margin-bottom: 24px;
+        }
+
+        .settings-group h3 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+
+        .message-item {
+            padding: 16px;
+            border-radius: 12px;
+            background: #f3f4f6;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-text {
+            margin-bottom: 8px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .message-date {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--green);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 24px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .copy-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f3f4f6;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .link-text {
+            flex: 1;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 8px;
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NGL Message Form -->
+    <div id="ngl-form" class="container">
+        <div class="card">
+            <div class="profile">
+                <img src="/api/placeholder/80/80" alt="Profile" class="profile-img" id="profile-img">
+                <div class="profile-info">
+                    <h1 id="profile-name">Username</h1>
+                    <p>Menunggu pesanmu...</p>
+                </div>
+            </div>
+            <textarea class="textarea" id="message-input" placeholder="Tulis pesan anonim disini..."></textarea>
+            <button class="btn" id="send-btn">
+                <span id="send-text">Kirim Pesan Anonim</span>
+                <div id="spinner" class="spinner hidden"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div id="success-page" class="container hidden">
+        <div class="card">
+            <div class="success-message">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 11.0857V12.0057C21.9988 14.1621 21.3005 16.2604 20.0093 17.9875C18.7182 19.7147 16.9033 20.9782 14.8354 21.5896C12.7674 22.201 10.5573 22.1276 8.53447 21.3803C6.51168 20.633 4.78465 19.2518 3.61096 17.4428C2.43727 15.6338 1.87979 13.4938 2.02168 11.342C2.16356 9.19029 2.99721 7.14205 4.39828 5.5028C5.79935 3.86354 7.69279 2.72111 9.79619 2.24587C11.8996 1.77063 14.1003 1.98806 16.07 2.86572" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22 4L12 14.01L9 11.01" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Pesan berhasil dikirim!
+            </div>
+            <button class="btn" style="margin-top: 20px;" onclick="location.reload()">Kirim Pesan Lagi</button>
+        </div>
+    </div>
+
+    <!-- Admin Login -->
+    <div id="login-page" class="container hidden">
+        <div class="card">
+            <h2 style="margin-bottom: 24px; text-align: center;">Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-input" placeholder="Masukkan username">
+                </div>
+                <div class="form-group">
+                    <label for="profile-url">Profile URL</label>
+                    <input type="text" id="profile-url" class="form-input" placeholder="URL foto profil">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Masukkan password">
+                </div>
+                <button type="submit" class="btn">Masuk</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="container hidden">
+        <div class="header">
+            <h2>Admin Panel</h2>
+            <button id="logout-btn" class="logout-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Logout
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="tab-header">
+                <button class="tab-btn active" data-tab="messages">Pesan</button>
+                <button class="tab-btn" data-tab="settings">Pengaturan</button>
+            </div>
+
+            <!-- Messages Tab -->
+            <div id="messages-tab" class="tab-content">
+                <div class="copy-link">
+                    <span class="link-text" id="share-link"></span>
+                    <button class="copy-btn" id="copy-link-btn">Salin</button>
+                </div>
+                <div id="messages-container">
+                    <p id="no-messages" style="text-align: center; color: var(--gray);">Belum ada pesan</p>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content hidden">
+                <div class="settings-group">
+                    <h3>Ubah Tampilan</h3>
+                    <div class="form-group">
+                        <label for="button-text">Teks Tombol</label>
+                        <input type="text" id="button-text" class="form-input" value="Kirim Pesan Anonim">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-username">Username</label>
+                        <input type="text" id="admin-username" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-profile">URL Foto Profil</label>
+                        <input type="text" id="admin-profile" class="form-input">
+                    </div>
+                    <button id="save-settings" class="btn">Simpan Perubahan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Checking for current page
+        const urlParams = new URLSearchParams(window.location.search);
+        const isAdmin = window.location.pathname.endsWith('admin.html');
+        const isNGL = window.location.pathname.endsWith('ngl.html') || window.location.pathname === '/';
+        
+        // Storage keys
+        const ADMIN_DATA_KEY = 'ngl_admin_data';
+        const MESSAGES_KEY = 'ngl_messages';
+        const SETTINGS_KEY = 'ngl_settings';
+        
+        // Default data
+        const defaultAdminData = {
+            username: 'Admin',
+            profileUrl: '/api/placeholder/80/80',
+            password: 'admin123'
+        };
+        
+        const defaultSettings = {
+            buttonText: 'Kirim Pesan Anonim'
+        };
+        
+        // Helper functions
+        function saveToStorage(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+        
+        function getFromStorage(key, defaultValue = null) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : defaultValue;
+        }
+        
+        function getCurrentTimestamp() {
+            return new Date().toLocaleString('id-ID', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Initialize data if needed
+        if (!getFromStorage(ADMIN_DATA_KEY)) {
+            saveToStorage(ADMIN_DATA_KEY, defaultAdminData);
+        }
+        
+        if (!getFromStorage(MESSAGES_KEY)) {
+            saveToStorage(MESSAGES_KEY, []);
+        }
+        
+        if (!getFromStorage(SETTINGS_KEY)) {
+            saveToStorage(SETTINGS_KEY, defaultSettings);
+        }
+        
+        // Page-specific code
+        if (isNGL) {
+            // NGL message form page
+            document.getElementById('ngl-form').classList.remove('hidden');
+            
+            // Load settings
+            const adminData = getFromStorage(ADMIN_DATA_KEY);
+            const settings = getFromStorage(SETTINGS_KEY);
+            
+            document.getElementById('profile-name').textContent = adminData.username;
+            document.getElementById('profile-img').src = adminData.profileUrl;
+            document.getElementById('send-text').textContent = settings.buttonText;
+            
+            // Send message functionality
+            document.getElementById('send-btn').addEventListener('click', function() {
+                const messageText = document.getElementById('message-input').value.trim();
+                
+                if (!messageText) {
+                    alert('Pesan tidak boleh kosong');
+                    return;
+                }
+                
+                // Show spinner
+                document.getElementById('send-text').classList.add('hidden');
+                document.getElementById('spinner').classList.remove('hidden');
+                
+                // Simulate sending delay
+                setTimeout(() => {
+                    // Save message
+                    const messages = getFromStorage(MESSAGES_KEY, []);
+                    messages.push({
+                        text: messageText,
+                        timestamp: getCurrentTimestamp()
+                    });
+                    saveToStorage(MESSAGES_KEY, messages);
+                    
+                    // Show success
+                    document.getElementById('ngl-form').classList.add('hidden');
+                    document.getElementById('success-page').classList.remove('hidden');
+                }, 1500);
+            });
+        } else if (isAdmin) {
+            // Check login status
+            const isLoggedIn = sessionStorage.getItem('admin_logged_in');
+            
+            if (isLoggedIn) {
+                showAdminPanel();
+            } else {
+                showLoginForm();
+            }
+            
+            // Login form handler
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const inputUsername = document.getElementById('username').value;
+                const inputProfileUrl = document.getElementById('profile-url').value;
+                const inputPassword = document.getElementById('password').value;
+                
+                const adminData = getFromStorage(ADMIN_DATA_KEY);
+                
+                if (inputPassword === adminData.password) {
+                    // Update admin data if provided
+                    if (inputUsername) adminData.username = inputUsername;
+                    if (inputProfileUrl) adminData.profileUrl = inputProfileUrl;
+                    saveToStorage(ADMIN_DATA_KEY, adminData);
+                    
+                    // Set login status
+                    sessionStorage.setItem('admin_logged_in', 'true');
+                    showAdminPanel();
+                } else {
+                    alert('Password salah');
+                }
+            });
+            
+            // Logout handler
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                sessionStorage.removeItem('admin_logged_in');
+                showLoginForm();
+            });
+            
+            // Tab switching
+            document.querySelectorAll('.tab-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tab = this.dataset.tab;
+                    
+                    // Update active button
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show selected tab
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    document.getElementById(`${tab}-tab`).classList.remove('hidden');
+                });
+            });
+            
+            // Save settings
+            document.getElementById('save-settings').addEventListener('click', function() {
+                const buttonText = document.getElementById('button-text').value;
+                const username = document.getElementById('admin-username').value;
+                const profileUrl = document.getElementById('admin-profile').value;
+                
+                // Update settings
+                const settings = getFromStorage(SETTINGS_KEY, defaultSettings);
+                settings.buttonText = buttonText;
+                saveToStorage(SETTINGS_KEY, settings);
+                
+                // Update admin data
+                const adminData = getFromStorage(ADMIN_DATA_KEY);
+                if (username) adminData.username = username;
+                if (profileUrl) adminData.profileUrl = profileUrl;
+                saveToStorage(ADMIN_DATA_KEY, adminData);
+                
+                alert('Pengaturan berhasil disimpan');
+            });
+            
+            // Copy link button
+            document.getElementById('copy-link-btn').addEventListener('click', function() {
+                const linkText = document.getElementById('share-link').textContent;
+                navigator.clipboard.writeText(linkText).then(() => {
+                    const originalText = this.textContent;
+                    this.textContent = 'Tersalin!';
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                    }, 2000);
+                });
+            });
+        }
+        
+        // Admin panel functions
+        function showLoginForm() {
+            document.getElementById('login-page').classList.remove('hidden');
+            document.getElementById('admin-panel').classList.add('hidden');
+        }
+        
+        function showAdminPanel() {
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('admin-panel').classList.remove('hidden');
+            
+            // Load admin data
+            const adminData = getFromStorage(ADMIN_DATA_KEY);
+            const settings = getFromStorage(SETTINGS_KEY);
+            
+            // Fill settings form
+            document.getElementById('button-text').value = settings.buttonText;
+            document.getElementById('admin-username').value = adminData.username;
+            document.getElementById('admin-profile').value = adminData.profileUrl;
+            
+            // Set share link
+            const currentUrl = window.location.href.replace('admin.html', 'ngl.html');
+            document.getElementById('share-link').textContent = currentUrl;
+            
+            // Load messages
+            loadMessages();
+        }
+        
+        function loadMessages() {
+            const messagesContainer = document.getElementById('messages-container');
+            const noMessagesElement = document.getElementById('no-messages');
+            const messages = getFromStorage(MESSAGES_KEY, []);
+            
+            if (messages.length === 0) {
+                noMessagesElement.classList.remove('hidden');
+                return;
+            }
+            
+            noMessagesElement.classList.add('hidden');
+            messagesContainer.innerHTML = '';
+            
+            // Sort messages by timestamp (newest first)
+            messages.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .forEach(message => {
+                    const messageEl = document.createElement('div');
+                    messageEl.className = 'message-item';
+                    messageEl.innerHTML = `
+                        <p class="message-text">${message.text}</p>
+                        <div class="message-date">${message.timestamp}</div>
+                    `;
+                    messagesContainer.appendChild(messageEl);
+                });
+        }
+    </script>
+</body>
+</html>
