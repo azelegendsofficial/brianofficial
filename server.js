@@ -1,277 +1,349 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs');
 const path = require('path');
+const { MongoClient, ObjectId } = require('mongodb');
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// MongoDB Connection URI - use environment variable in production
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://your_username:your_password@cluster0.mongodb.net/anonymousMessaging?retryWrites=true&w=majority';
+let db;
+
+// Connect to MongoDB
+async function connectToMongoDB() {
+  try {
+    const client = new MongoClient(MONGODB_URI);
+    await client.connect();
+    console.log('Connected to MongoDB');
+    db = client.db('anonymousMessaging');
+    
+    // Create indexes for better performance
+    await db.collection('profiles').createIndex({ id: 1 }, { unique: true });
+    await db.collection('messages').createIndex({ recipientId: 1 });
+    
+    return client;
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
+  }
+}
 
 // Middleware
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Data directories
-const DATA_DIR = path.join(__dirname, 'data');
-const PROFILES_DIR = path.join(DATA_DIR, 'profiles');
-const MESSAGES_DIR = path.join(DATA_DIR, 'messages');
-
-// Ensure data directories exist
-if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
-if (!fs.existsSync(PROFILES_DIR)) fs.mkdirSync(PROFILES_DIR);
-if (!fs.existsSync(MESSAGES_DIR)) fs.mkdirSync(MESSAGES_DIR);
-
-// Helper functions
-function getProfilePath(profileId) {
-    return path.join(PROFILES_DIR, `${profileId}.json`);
+// Helper functions for MongoDB operations
+async function getProfile(profileId) {
+  return await db.collection('profiles').findOne({ id: profileId });
 }
 
-function getMessagesPath(profileId) {
-    return path.join(MESSAGES_DIR, `${profileId}.json`);
+async function saveProfile(profileId, profileData) {
+  const result = await db.collection('profiles').updateOne(
+    { id: profileId },
+    { $set: profileData },
+    { upsert: true }
+  );
+  return result;
 }
 
-function saveProfile(profileId, profileData) {
-    fs.writeFileSync(getProfilePath(profileId), JSON.stringify(profileData, null, 2));
+async function getMessages(profileId) {
+  return await db.collection('messages')
+    .find({ recipientId: profileId })
+    .sort({ timestamp: -1 })
+    .toArray();
 }
 
-function saveMessages(profileId, messages) {
-    fs.writeFileSync(getMessagesPath(profileId), JSON.stringify(messages, null, 2));
+async function saveMessage(message) {
+  const result = await db.collection('messages').insertOne(message);
+  return result;
 }
 
-function getProfile(profileId) {
-    const profilePath = getProfilePath(profileId);
-    if (fs.existsSync(profilePath)) {
-        return JSON.parse(fs.readFileSync(profilePath, 'utf8'));
-    }
-    return null;
+async function updateMessage(messageId, updates) {
+  const result = await db.collection('messages').updateOne(
+    { _id: new ObjectId(messageId) },
+    { $set: updates }
+  );
+  return result;
 }
 
-function getMessages(profileId) {
-    const messagesPath = getMessagesPath(profileId);
-    if (fs.existsSync(messagesPath)) {
-        return JSON.parse(fs.readFileSync(messagesPath, 'utf8'));
-    }
-    return [];
+async function deleteMessage(messageId) {
+  const result = await db.collection('messages').deleteOne({ _id: new ObjectId(messageId) });
+  return result;
+}
+
+async function deleteAllMessages(profileId) {
+  const result = await db.collection('messages').deleteMany({ recipientId: profileId });
+  return result;
+}
+
+async function getAllProfiles() {
+  return await db.collection('profiles')
+    .find({}, { projection: { password: 0 } })
+    .toArray();
 }
 
 // Routes
 // Serve HTML files
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin-panel.html'));
+  res.sendFile(path.join(__dirname, 'public', 'admin-panel.html'));
 });
 
 app.get('/ngl.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'ngl.html'));
+  res.sendFile(path.join(__dirname, 'public', 'ngl.html'));
 });
 
 // API endpoints
 // Login endpoint
-app.post('/api/login', (req, res) => {
-    const { id, name, password } = req.body;
-    
-    if (!id || !name || !password) {
-        return res.json({ success: false, message: 'Missing required fields' });
-    }
-    
-    let profile = getProfile(id);
+app.post('/api/login', async (req, res) => {
+  const { id, name, password } = req.body;
+  
+  if (!id || !name || !password) {
+    return res.json({ success: false, message: 'Missing required fields' });
+  }
+  
+  try {
+    let profile = await getProfile(id);
     
     // If profile doesn't exist, create a new one
     if (!profile) {
-        profile = {
-            id,
-            name,
-            password, // In a real app, you'd hash this password
-            headerText: 'Kirim Pesan Anonim',
-            profileImage: ''
-        };
-        saveProfile(id, profile);
-        // Create empty messages file
-        saveMessages(id, []);
+      profile = {
+        id,
+        name,
+        password, // In a real app, you'd hash this password
+        headerText: 'Kirim Pesan Anonim',
+        profileImage: '',
+        createdAt: new Date()
+      };
+      await saveProfile(id, profile);
     } 
     // If profile exists, verify password
     else if (profile.password !== password) {
-        return res.json({ success: false, message: 'Invalid credentials' });
+      return res.json({ success: false, message: 'Invalid credentials' });
     }
     
     // Return success without sending password back
     const { password: _, ...safeProfile } = profile;
     return res.json({ success: true, ...safeProfile });
+  } catch (error) {
+    console.error('Login error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Get profile
-app.get('/api/profile/:id', (req, res) => {
-    const profileId = req.params.id;
-    const profile = getProfile(profileId);
+app.get('/api/profile/:id', async (req, res) => {
+  const profileId = req.params.id;
+  
+  try {
+    const profile = await getProfile(profileId);
     
     if (!profile) {
-        return res.json({ 
-            name: 'Anonymous', 
-            headerText: 'Kirim Pesan Anonim',
-            profileImage: ''
-        });
+      return res.json({ 
+        name: 'Anonymous', 
+        headerText: 'Kirim Pesan Anonim',
+        profileImage: ''
+      });
     }
     
     // Don't send password back
     const { password, ...safeProfile } = profile;
     return res.json(safeProfile);
+  } catch (error) {
+    console.error('Get profile error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Update profile
-app.post('/api/profile/update', (req, res) => {
-    const { id, name, headerText, profileImage } = req.body;
-    
-    if (!id) {
-        return res.json({ success: false, message: 'Profile ID is required' });
-    }
-    
-    const profile = getProfile(id);
+app.post('/api/profile/update', async (req, res) => {
+  const { id, name, headerText, profileImage } = req.body;
+  
+  if (!id) {
+    return res.json({ success: false, message: 'Profile ID is required' });
+  }
+  
+  try {
+    const profile = await getProfile(id);
     
     if (!profile) {
-        return res.json({ success: false, message: 'Profile not found' });
+      return res.json({ success: false, message: 'Profile not found' });
     }
     
     // Update profile data
-    profile.name = name || profile.name;
-    profile.headerText = headerText || profile.headerText;
-    profile.profileImage = profileImage || profile.profileImage;
+    const updatedProfile = {
+      ...profile,
+      name: name || profile.name,
+      headerText: headerText || profile.headerText,
+      profileImage: profileImage || profile.profileImage,
+      updatedAt: new Date()
+    };
     
     // Save updated profile
-    saveProfile(id, profile);
+    await saveProfile(id, updatedProfile);
     
     return res.json({ success: true });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Send message
-app.post('/api/message', (req, res) => {
-    const { recipientId, message, timestamp } = req.body;
-    
-    if (!recipientId || !message) {
-        return res.json({ success: false, message: 'Missing required fields' });
-    }
-    
-    // Get existing messages
-    const messages = getMessages(recipientId);
-    
+app.post('/api/message', async (req, res) => {
+  const { recipientId, message, timestamp } = req.body;
+  
+  if (!recipientId || !message) {
+    return res.json({ success: false, message: 'Missing required fields' });
+  }
+  
+  try {
     // Create new message
     const newMessage = {
-        id: Date.now().toString(),
-        message,
-        timestamp: timestamp || Date.now(),
-        read: false
+      recipientId,
+      message,
+      timestamp: timestamp || Date.now(),
+      read: false,
+      createdAt: new Date()
     };
     
-    // Add to messages array
-    messages.push(newMessage);
+    // Save message
+    const result = await saveMessage(newMessage);
     
-    // Save messages
-    saveMessages(recipientId, messages);
-    
-    return res.json({ success: true, messageId: newMessage.id });
+    return res.json({ 
+      success: true, 
+      messageId: result.insertedId.toString()
+    });
+  } catch (error) {
+    console.error('Send message error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Get messages
-app.get('/api/messages/:id', (req, res) => {
-    const profileId = req.params.id;
-    const messages = getMessages(profileId);
+app.get('/api/messages/:id', async (req, res) => {
+  const profileId = req.params.id;
+  
+  try {
+    const messages = await getMessages(profileId);
     
     return res.json({ success: true, messages });
+  } catch (error) {
+    console.error('Get messages error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Mark message as read
-app.post('/api/message/read', (req, res) => {
-    const { profileId, messageId } = req.body;
-    
-    if (!profileId || !messageId) {
-        return res.json({ success: false, message: 'Missing required fields' });
-    }
-    
-    const messages = getMessages(profileId);
-    const messageIndex = messages.findIndex(m => m.id === messageId);
-    
-    if (messageIndex === -1) {
-        return res.json({ success: false, message: 'Message not found' });
-    }
-    
-    // Mark as read
-    messages[messageIndex].read = true;
-    
-    // Save messages
-    saveMessages(profileId, messages);
+app.post('/api/message/read', async (req, res) => {
+  const { profileId, messageId } = req.body;
+  
+  if (!profileId || !messageId) {
+    return res.json({ success: false, message: 'Missing required fields' });
+  }
+  
+  try {
+    await updateMessage(messageId, { 
+      read: true,
+      readAt: new Date()
+    });
     
     return res.json({ success: true });
+  } catch (error) {
+    console.error('Mark message read error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Delete message
-app.post('/api/message/delete', (req, res) => {
-    const { profileId, messageId } = req.body;
-    
-    if (!profileId || !messageId) {
-        return res.json({ success: false, message: 'Missing required fields' });
-    }
-    
-    const messages = getMessages(profileId);
-    const updatedMessages = messages.filter(m => m.id !== messageId);
-    
-    // Save updated messages
-    saveMessages(profileId, updatedMessages);
+app.post('/api/message/delete', async (req, res) => {
+  const { profileId, messageId } = req.body;
+  
+  if (!profileId || !messageId) {
+    return res.json({ success: false, message: 'Missing required fields' });
+  }
+  
+  try {
+    await deleteMessage(messageId);
     
     return res.json({ success: true });
+  } catch (error) {
+    console.error('Delete message error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Delete all messages
-app.post('/api/messages/delete-all', (req, res) => {
-    const { profileId } = req.body;
-    
-    if (!profileId) {
-        return res.json({ success: false, message: 'Profile ID is required' });
-    }
-    
-    // Save empty messages array
-    saveMessages(profileId, []);
+app.post('/api/messages/delete-all', async (req, res) => {
+  const { profileId } = req.body;
+  
+  if (!profileId) {
+    return res.json({ success: false, message: 'Profile ID is required' });
+  }
+  
+  try {
+    await deleteAllMessages(profileId);
     
     return res.json({ success: true });
+  } catch (error) {
+    console.error('Delete all messages error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Get all profiles (for admin panel)
-app.get('/api/profiles', (req, res) => {
-    const profileFiles = fs.readdirSync(PROFILES_DIR);
-    const profiles = profileFiles.map(file => {
-        const profileData = JSON.parse(fs.readFileSync(path.join(PROFILES_DIR, file), 'utf8'));
-        const { password, ...safeProfile } = profileData;
-        return safeProfile;
-    });
+app.get('/api/profiles', async (req, res) => {
+  try {
+    const profiles = await getAllProfiles();
     
     return res.json({ success: true, profiles });
+  } catch (error) {
+    console.error('Get profiles error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Change password
-app.post('/api/profile/change-password', (req, res) => {
-    const { id, currentPassword, newPassword } = req.body;
-    
-    if (!id || !currentPassword || !newPassword) {
-        return res.json({ success: false, message: 'Missing required fields' });
-    }
-    
-    const profile = getProfile(id);
+app.post('/api/profile/change-password', async (req, res) => {
+  const { id, currentPassword, newPassword } = req.body;
+  
+  if (!id || !currentPassword || !newPassword) {
+    return res.json({ success: false, message: 'Missing required fields' });
+  }
+  
+  try {
+    const profile = await getProfile(id);
     
     if (!profile) {
-        return res.json({ success: false, message: 'Profile not found' });
+      return res.json({ success: false, message: 'Profile not found' });
     }
     
     if (profile.password !== currentPassword) {
-        return res.json({ success: false, message: 'Current password is incorrect' });
+      return res.json({ success: false, message: 'Current password is incorrect' });
     }
     
     // Update password
     profile.password = newPassword;
+    profile.passwordUpdatedAt = new Date();
     
     // Save updated profile
-    saveProfile(id, profile);
+    await saveProfile(id, profile);
     
     return res.json({ success: true });
+  } catch (error) {
+    console.error('Change password error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
-// Start server
-app.listen(PORT, () => {
+// Connect to MongoDB before starting the server
+connectToMongoDB().then(() => {
+  // Start server
+  const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`Visit http://localhost:${PORT} to access the admin panel`);
     console.log(`Visit http://localhost:${PORT}/ngl.html to access the message form`);
+  });
 });
+
+// Di akhir file setelah app.listen()
+module.exports = app;
