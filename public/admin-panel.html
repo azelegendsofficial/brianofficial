@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .admin-card {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            color: white;
+        }
+        .input-field {
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+        .save-btn {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            border-radius: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+        .message-item {
+            border-left: 4px solid #8B5CF6;
+            background-color: #f8f9ff;
+            transition: all 0.2s ease;
+        }
+        .message-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        .profile-img {
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .login-card {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="flex items-center justify-center min-h-screen">
+        <div class="login-card w-full max-w-md p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Admin Login</h1>
+                <p class="text-gray-600">Masuk ke dashboard admin</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2" for="nameInput">Nama</label>
+                    <input type="text" id="nameInput" class="input-field w-full p-3 border border-gray-300 focus:outline-none" placeholder="Masukkan nama Anda">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2" for="profileInput">Profile ID</label>
+                    <input type="text" id="profileInput" class="input-field w-full p-3 border border-gray-300 focus:outline-none" placeholder="Masukkan ID profil Anda">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2" for="passwordInput">Password</label>
+                    <input type="password" id="passwordInput" class="input-field w-full p-3 border border-gray-300 focus:outline-none" placeholder="Masukkan password">
+                </div>
+                
+                <button id="loginButton" class="save-btn w-full py-3 text-white font-medium mt-4">
+                    Masuk
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="hidden flex flex-col items-center">
+        <div class="admin-card w-full max-w-4xl p-6">
+            <div class="flex justify-between items-center mb-8">
+                <div class="flex items-center">
+                    <img id="adminProfileImage" src="/api/placeholder/50/50" alt="Profile" class="profile-img w-12 h-12 rounded-full mr-4">
+                    <div>
+                        <h1 id="adminName" class="text-2xl font-bold text-gray-800">Admin Panel</h1>
+                        <p id="adminProfileId" class="text-gray-600">profile-id</p>
+                    </div>
+                </div>
+                <div>
+                    <button id="logoutButton" class="px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-all">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tabs Navigation -->
+            <div class="flex mb-6 border-b">
+                <button class="tab-button active px-6 py-3 font-medium" data-tab="messages">
+                    <i class="fas fa-envelope mr-2"></i>Pesan
+                </button>
+                <button class="tab-button px-6 py-3 font-medium" data-tab="settings">
+                    <i class="fas fa-cog mr-2"></i>Pengaturan Profil
+                </button>
+                <button class="tab-button px-6 py-3 font-medium" data-tab="share">
+                    <i class="fas fa-share-alt mr-2"></i>Bagikan
+                </button>
+            </div>
+            
+            <!-- Messages Tab -->
+            <div id="messagesTab" class="tab-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Pesan Masuk</h2>
+                    <span id="messageCount" class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">0 pesan</span>
+                </div>
+                
+                <div id="messagesList" class="space-y-4 max-h-96 overflow-y-auto">
+                    <!-- Messages will be loaded here -->
+                    <div class="text-center text-gray-500 py-8">
+                        Belum ada pesan masuk
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings Tab -->
+            <div id="settingsTab" class="tab-content hidden">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Pengaturan Profil</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="headerTextInput">Teks Header</label>
+                        <input type="text" id="headerTextInput" class="input-field w-full p-3 border border-gray-300 focus:outline-none" placeholder="Kirim Pesan Anonim">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="profileNameInput">Nama Profil</label>
+                        <input type="text" id="profileNameInput" class="input-field w-full p-3 border border-gray-300 focus:outline-none" placeholder="Nama Anda">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="profileImageInput">URL Gambar Profil</label>
+                        <input type="text" id="profileImageInput" class="input-field w-full p-3 border border-gray-300 focus:outline-none" placeholder="https://contoh.com/gambar.jpg">
+                    </div>
+                    
+                    <button id="saveProfileButton" class="save-btn px-6 py-3 text-white font-medium">
+                        <i class="fas fa-save mr-2"></i>Simpan Perubahan
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Share Tab -->
+            <div id="shareTab" class="tab-content hidden">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Bagikan Link</h2>
+                
+                <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                    <p class="text-gray-700 mb-2">Link untuk dibagikan:</p>
+                    <div class="flex">
+                        <input id="shareUrlInput" type="text" class="input-field w-full p-3 border border-gray-300 focus:outline-none" readonly>
+                        <button id="copyUrlButton" class="bg-gray-800 text-white px-4 ml-2 rounded-lg hover:bg-gray-700">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="font-medium text-blue-800 mb-2">
+                        <i class="fas fa-info-circle mr-2"></i>Cara Menggunakan
+                    </h3>
+                    <p class="text-blue-700">
+                        1. Salin link di atas<br>
+                        2. Bagikan ke teman atau posting di media sosial<br>
+                        3. Pesan yang dikirim ke link tersebut akan muncul di tab Pesan
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const adminDashboard = document.getElementById('adminDashboard');
+        const loginButton = document.getElementById('loginButton');
+        const logoutButton = document.getElementById('logoutButton');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const saveProfileButton = document.getElementById('saveProfileButton');
+        const copyUrlButton = document.getElementById('copyUrlButton');
+        const messagesList = document.getElementById('messagesList');
+        const messageCount = document.getElementById('messageCount');
+        
+        // Profile data
+        let currentProfile = {
+            id: '',
+            name: '',
+            headerText: 'Kirim Pesan Anonim',
+            profileImage: ''
+        };
+        
+        // Check if user is already logged in
+        function checkLoginStatus() {
+            const storedProfile = localStorage.getItem('ngl_profile');
+            const storedAuth = localStorage.getItem('ngl_auth');
+            
+            if (storedProfile && storedAuth) {
+                try {
+                    currentProfile = JSON.parse(storedProfile);
+                    showAdminDashboard();
+                    loadMessages();
+                    updateProfileUI();
+                } catch (e) {
+                    console.error('Invalid stored profile:', e);
+                    showLoginScreen();
+                }
+            } else {
+                showLoginScreen();
+            }
+        }
+        
+        // Show login screen
+        function showLoginScreen() {
+            loginScreen.classList.remove('hidden');
+            adminDashboard.classList.add('hidden');
+        }
+        
+        // Show admin dashboard
+        function showAdminDashboard() {
+            loginScreen.classList.add('hidden');
+            adminDashboard.classList.remove('hidden');
+            
+            // Update share URL
+            document.getElementById('shareUrlInput').value = `${window.location.origin}/ngl.html?id=${currentProfile.id}`;
+            
+            // Update admin info
+            document.getElementById('adminName').textContent = currentProfile.name;
+            document.getElementById('adminProfileId').textContent = `ID: ${currentProfile.id}`;
+            
+            // Update settings form
+            document.getElementById('headerTextInput').value = currentProfile.headerText || 'Kirim Pesan Anonim';
+            document.getElementById('profileNameInput').value = currentProfile.name || '';
+            document.getElementById('profileImageInput').value = currentProfile.profileImage || '';
+            
+            if (currentProfile.profileImage) {
+                document.getElementById('adminProfileImage').src = currentProfile.profileImage;
+            }
+        }
+        
+        // Login handler
+        loginButton.addEventListener('click', function() {
+            const name = document.getElementById('nameInput').value.trim();
+            const profileId = document.getElementById('profileInput').value.trim();
+            const password = document.getElementById('passwordInput').value.trim();
+            
+            if (!name || !profileId || !password) {
+                alert('Semua field harus diisi!');
+                return;
+            }
+            
+            // Verify login with the server
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: profileId,
+                    name: name,
+                    password: password
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentProfile = {
+                        id: profileId,
+                        name: name,
+                        headerText: data.headerText || 'Kirim Pesan Anonim',
+                        profileImage: data.profileImage || ''
+                    };
+                    
+                    // Store in localStorage
+                    localStorage.setItem('ngl_profile', JSON.stringify(currentProfile));
+                    localStorage.setItem('ngl_auth', 'authenticated');
+                    
+                    showAdminDashboard();
+                    loadMessages();
+                } else {
+                    alert('Login gagal. Periksa kembali informasi yang dimasukkan.');
+                }
+            })
+            .catch(error => {
+                console.error('Error during login:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            });
+        });
+        
+        // Logout handler
+        logoutButton.addEventListener('click', function() {
+            localStorage.removeItem('ngl_profile');
+            localStorage.removeItem('ngl_auth');
+            showLoginScreen();
+        });
+        
+        // Tab switching
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                
+                // Update active tab button
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show selected tab content
+                tabContents.forEach(content => content.classList.add('hidden'));
+                document.getElementById(`${tabName}Tab`).classList.remove('hidden');
+            });
+        });
+        
+        // Save profile settings
+        saveProfileButton.addEventListener('click', function() {
+            const headerText = document.getElementById('headerTextInput').value.trim();
+            const profileName = document.getElementById('profileNameInput').value.trim();
+            const profileImage = document.getElementById('profileImageInput').value.trim();
+            
+            // Update profile on the server
+            fetch('/api/profile/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: currentProfile.id,
+                    name: profileName,
+                    headerText: headerText,
+                    profileImage: profileImage
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update local profile data
+                    currentProfile.name = profileName;
+                    currentProfile.headerText = headerText;
+                    currentProfile.profileImage = profileImage;
+                    
+                    // Update localStorage
+                    localStorage.setItem('ngl_profile', JSON.stringify(currentProfile));
+                    
+                    // Update UI
+                    updateProfileUI();
+                    
+                    alert('Profil berhasil diperbarui!');
+                } else {
+                    alert('Gagal memperbarui profil. Silakan coba lagi.');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating profile:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            });
+        });
+        
+        // Copy share URL
+        copyUrlButton.addEventListener('click', function() {
+            const shareUrl = document.getElementById('shareUrlInput');
+            shareUrl.select();
+            document.execCommand('copy');
+            
+            // Show feedback
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 2000);
+        });
+        
+        // Load messages from server
+        function loadMessages() {
+            fetch(`/api/messages/${currentProfile.id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.messages.length > 0) {
+                        messagesList.innerHTML = '';
+                        
+                        data.messages.forEach(msg => {
+                            const messageDate = new Date(msg.timestamp);
+                            const formattedDate = messageDate.toLocaleString();
+                            
+                            const messageElement = document.createElement('div');
+                            messageElement.className = 'message-item p-4 rounded-lg';
+                            messageElement.innerHTML = `
+                                <p class="text-gray-800">${msg.message}</p>
+                                <div class="flex justify-between items-center mt-2">
+                                    <span class="text-sm text-gray-500">
+                                        <i class="far fa-clock mr-1"></i>${formattedDate}
+                                    </span>
+                                </div>
+                            `;
+                            
+                            messagesList.appendChild(messageElement);
+                        });
+                        
+                        // Update message count
+                        messageCount.textContent = `${data.messages.length} pesan`;
+                    } else {
+                        messagesList.innerHTML = `
+                            <div class="text-center text-gray-500 py-8">
+                                Belum ada pesan masuk
+                            </div>
+                        `;
+                        messageCount.textContent = '0 pesan';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading messages:', error);
+                    messagesList.innerHTML = `
+                        <div class="text-center text-red-500 py-8">
+                            Gagal memuat pesan. Silakan coba lagi.
+                        </div>
+                    `;
+                });
+        }
+        
+        // Update profile UI
+        function updateProfileUI() {
+            document.getElementById('adminName').textContent = currentProfile.name;
+            document.getElementById('adminProfileId').textContent = `ID: ${currentProfile.id}`;
+            
+            if (currentProfile.profileImage) {
+                document.getElementById('adminProfileImage').src = currentProfile.profileImage;
+            }
+        }
+        
+        // Initialize admin panel
+        checkLoginStatus();
+        
+        // Set up periodic refresh for messages
+        setInterval(loadMessages, 30000); // Refresh every 30 seconds
+    </script>
+</body>
+</html>
