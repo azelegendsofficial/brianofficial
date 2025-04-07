@@ -1,30 +1,83 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const { MongoClient, ObjectId } = require('mongodb');
+const mysql = require('mysql2/promise');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// MongoDB Connection URI - use environment variable in production
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://brianofficial:briangila@cluster0.mongodb.net/anonymousMessaging?retryWrites=true&w=majority';
-let db;
+// MySQL Connection Config
+const dbConfig = {
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'anonymousMessaging',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+};
 
-// Connect to MongoDB
-async function connectToMongoDB() {
+let pool;
+
+// Connect to MySQL
+async function connectToMySQL() {
   try {
-    const client = new MongoClient(MONGODB_URI);
-    await client.connect();
-    console.log('Connected to MongoDB');
-    db = client.db('anonymousMessaging');
+    // Create connection pool
+    pool = mysql.createPool(dbConfig);
     
-    // Create indexes for better performance
-    await db.collection('profiles').createIndex({ id: 1 }, { unique: true });
-    await db.collection('messages').createIndex({ recipientId: 1 });
+    // Test connection
+    const connection = await pool.getConnection();
+    console.log('Connected to MySQL database');
     
-    return client;
+    // Initialize database tables if needed
+    await initializeDatabase();
+    
+    connection.release();
+    return pool;
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    console.error('MySQL connection error:', error);
     process.exit(1);
+  }
+}
+
+// Initialize database and tables
+async function initializeDatabase() {
+  try {
+    const connection = await pool.getConnection();
+    
+    // Create profiles table
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS profiles (
+        id VARCHAR(255) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        headerText VARCHAR(255) DEFAULT 'Kirim Pesan Anonim',
+        profileImage TEXT,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        passwordUpdatedAt TIMESTAMP NULL
+      )
+    `);
+    
+    // Create messages table
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS messages (
+        messageId INT AUTO_INCREMENT PRIMARY KEY,
+        recipientId VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        timestamp BIGINT NOT NULL,
+        read BOOLEAN DEFAULT FALSE,
+        readAt TIMESTAMP NULL,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (recipientId) REFERENCES profiles(id) ON DELETE CASCADE
+      )
+    `);
+    
+    console.log('Database tables initialized');
+    connection.release();
+  } catch (error) {
+    console.error('Error initializing database:', error);
+    throw error;
   }
 }
 
@@ -32,54 +85,98 @@ async function connectToMongoDB() {
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Helper functions for MongoDB operations
+// Helper functions for MySQL operations
 async function getProfile(profileId) {
-  return await db.collection('profiles').findOne({ id: profileId });
+  const [rows] = await pool.query('SELECT * FROM profiles WHERE id = ?', [profileId]);
+  return rows.length > 0 ? rows[0] : null;
 }
 
 async function saveProfile(profileId, profileData) {
-  const result = await db.collection('profiles').updateOne(
-    { id: profileId },
-    { $set: profileData },
-    { upsert: true }
-  );
-  return result;
+  const { name, password, headerText, profileImage, passwordUpdatedAt } = profileData;
+  
+  // Check if profile exists
+  const [existingRows] = await pool.query('SELECT id FROM profiles WHERE id = ?', [profileId]);
+  
+  if (existingRows.length > 0) {
+    // Update existing profile
+    const updateQuery = `
+      UPDATE profiles 
+      SET name = ?, 
+          password = ?, 
+          headerText = ?, 
+          profileImage = ?,
+          passwordUpdatedAt = ?
+      WHERE id = ?
+    `;
+    await pool.query(updateQuery, [
+      name, 
+      password, 
+      headerText || 'Kirim Pesan Anonim', 
+      profileImage || '', 
+      passwordUpdatedAt, 
+      profileId
+    ]);
+  } else {
+    // Insert new profile
+    const insertQuery = `
+      INSERT INTO profiles (id, name, password, headerText, profileImage) 
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    await pool.query(insertQuery, [
+      profileId, 
+      name, 
+      password, 
+      headerText || 'Kirim Pesan Anonim', 
+      profileImage || ''
+    ]);
+  }
+  
+  return { success: true };
 }
 
 async function getMessages(profileId) {
-  return await db.collection('messages')
-    .find({ recipientId: profileId })
-    .sort({ timestamp: -1 })
-    .toArray();
+  const [rows] = await pool.query(
+    'SELECT * FROM messages WHERE recipientId = ? ORDER BY timestamp DESC', 
+    [profileId]
+  );
+  return rows;
 }
 
 async function saveMessage(message) {
-  const result = await db.collection('messages').insertOne(message);
-  return result;
+  const { recipientId, message: messageText, timestamp } = message;
+  
+  const [result] = await pool.query(
+    'INSERT INTO messages (recipientId, message, timestamp) VALUES (?, ?, ?)',
+    [recipientId, messageText, timestamp]
+  );
+  
+  return { insertId: result.insertId };
 }
 
 async function updateMessage(messageId, updates) {
-  const result = await db.collection('messages').updateOne(
-    { _id: new ObjectId(messageId) },
-    { $set: updates }
+  const { read, readAt } = updates;
+  
+  await pool.query(
+    'UPDATE messages SET `read` = ?, readAt = ? WHERE messageId = ?',
+    [read, readAt, messageId]
   );
-  return result;
+  
+  return { success: true };
 }
 
 async function deleteMessage(messageId) {
-  const result = await db.collection('messages').deleteOne({ _id: new ObjectId(messageId) });
-  return result;
+  await pool.query('DELETE FROM messages WHERE messageId = ?', [messageId]);
+  return { success: true };
 }
 
 async function deleteAllMessages(profileId) {
-  const result = await db.collection('messages').deleteMany({ recipientId: profileId });
-  return result;
+  await pool.query('DELETE FROM messages WHERE recipientId = ?', [profileId]);
+  return { success: true };
 }
 
 async function getAllProfiles() {
-  return await db.collection('profiles')
-    .find({}, { projection: { password: 0 } })
-    .toArray();
+  const [rows] = await pool.query('SELECT id, name, headerText, profileImage, createdAt, updatedAt FROM profiles');
+  return rows;
 }
 
 // Routes
@@ -109,12 +206,12 @@ app.post('/api/login', async (req, res) => {
       profile = {
         id,
         name,
-        password, // In a real app, you'd hash this password
+        password,
         headerText: 'Kirim Pesan Anonim',
         profileImage: '',
-        createdAt: new Date()
       };
       await saveProfile(id, profile);
+      profile = await getProfile(id); // Get freshly created profile
     } 
     // If profile exists, verify password
     else if (profile.password !== password) {
@@ -174,8 +271,7 @@ app.post('/api/profile/update', async (req, res) => {
       ...profile,
       name: name || profile.name,
       headerText: headerText || profile.headerText,
-      profileImage: profileImage || profile.profileImage,
-      updatedAt: new Date()
+      profileImage: profileImage || profile.profileImage
     };
     
     // Save updated profile
@@ -197,13 +293,18 @@ app.post('/api/message', async (req, res) => {
   }
   
   try {
+    // Check if recipient profile exists
+    const profile = await getProfile(recipientId);
+    
+    if (!profile) {
+      return res.json({ success: false, message: 'Recipient profile not found' });
+    }
+    
     // Create new message
     const newMessage = {
       recipientId,
       message,
-      timestamp: timestamp || Date.now(),
-      read: false,
-      createdAt: new Date()
+      timestamp: timestamp || Date.now()
     };
     
     // Save message
@@ -211,7 +312,7 @@ app.post('/api/message', async (req, res) => {
     
     return res.json({ 
       success: true, 
-      messageId: result.insertedId.toString()
+      messageId: result.insertId
     });
   } catch (error) {
     console.error('Send message error:', error);
@@ -335,8 +436,8 @@ app.post('/api/profile/change-password', async (req, res) => {
   }
 });
 
-// Connect to MongoDB before starting the server
-connectToMongoDB().then(() => {
+// Connect to MySQL before starting the server
+connectToMySQL().then(() => {
   // Start server
   const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
