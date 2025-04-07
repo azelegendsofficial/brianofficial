@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MongoDB Connection URI - use environment variable in production
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://your_username:your_password@cluster0.mongodb.net/anonymousMessaging?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://brianofficial:briangila@cluster0.mongodb.net/anonymousMessaging?retryWrites=true&w=majority';
 let db;
 
 // Connect to MongoDB
