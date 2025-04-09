@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support My Work - Brian's Personal Website</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --accent-color: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: var(--dark-color);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            color: var(--primary-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Header Section */
+        .header {
+            height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding-top: 60px;
+            text-align: center;
+        }
+        
+        .header-content {
+            max-width: 700px;
+        }
+        
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .header p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        /* Support Section */
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 60px;
+            color: var(--dark-color);
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* Support Options */
+        .support-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .support-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            width: 300px;
+            transition: transform 0.3s;
+        }
+        
+        .support-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .card-header {
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+        }
+        
+        .card-body {
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+        
+        .currency {
+            font-size: 16px;
+        }
+        
+        .frequency {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .card-features {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .feature-item i {
+            color: var(--secondary-color);
+            margin-right: 10px;
+        }
+        
+        .support-button {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        .support-button:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Payment Methods Section */
+        .payment-methods {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 30px;
+        }
+        
+        .payment-title {
+            font-size: 24px;
+            color: var(--dark-color);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .payment-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .payment-option {
+            width: 120px;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-option:hover, .payment-option.active {
+            border-color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .payment-icon {
+            height: 40px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .payment-icon img {
+            max-height: 100%;
+            max-width: 100%;
+        }
+        
+        .payment-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* One-time Donation */
+        .one-time-donation {
+            max-width: 600px;
+            margin: 0 auto;
+            margin-top: 50px;
+        }
+        
+        .donation-title {
+            font-size: 24px;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .donation-form {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .amount-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .amount-option {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .amount-option:hover, .amount-option.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .custom-amount {
+            margin-top: 10px;
+        }
+        
+        .donate-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .donate-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        /* QR Code Section */
+        .qr-section {
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .qr-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .qr-code {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: inline-block;
+        }
+        
+        .qr-image {
+            max-width: 200px;
+            margin-bottom: 15px;
+        }
+        
+        .account-details {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            text-align: left;
+        }
+        
+        .account-item {
+            margin-bottom: 10px;
+            display: flex;
+        }
+        
+        .account-label {
+            font-weight: 600;
+            width: 120px;
+        }
+        
+        .copy-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        /* Thank You Section */
+        .thank-you {
+            background-color: var(--light-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .thank-you h2 {
+            font-size: 36px;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+        }
+        
+        .thank-you p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto;
+            margin-bottom: 30px;
+        }
+        
+        .social-share {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .share-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--dark-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+        
+        .share-btn:hover {
+            background-color: var(--primary-color);
+        }
+        
+        /* FAQ Section */
+        .faq {
+            padding: 80px 0;
+            background-color: #f5f8fa;
+        }
+        
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .faq-question {
+            padding: 20px;
+            background-color: var(--light-color);
+            font-weight: 600;
+            color: var(--dark-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .faq-answer.active {
+            padding: 20px;
+            max-height: 200px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .payment-success {
+            text-align: center;
+        }
+        
+        .success-icon {
+            font-size: 60px;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        
+        .success-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+        
+        .success-message {
+            margin-bottom: 30px;
+            color: #555;
+        }
+        
+        .return-home {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #1a252f;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+        
+        .footer-content p {
+            margin-bottom: 20px;
+        }
+        
+        .copyright {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .header h1 {
+                font-size: 36px;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+            
+            .support-options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .support-card {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .payment-options {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .payment-option {
+                width: 110px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">Brian<span>Official</span></div>
+            <ul class="nav-links">
+                <li><a href="/#home">Home</a></li>
+                <li><a href="/#about">About Me</a></li>
+                <li><a href="/#projects">Projects</a></li>
+                <li><a href="/#income">Income</a></li>
+                <li><a href="/#social">Connect</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>Support My Work</h1>
+                <p>Your support helps me continue creating digital solutions and developing my skills as a young coder.</p>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Monthly Support Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Become a Monthly Supporter</h2>
+            
+            <div class="support-options">
+                <!-- Basic Support -->
+                <div class="support-card">
+                    <div class="card-header">
+                        <h3>Basic Support</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="amount"><span class="currency">Rp</span> 25.000</div>
+                        <div class="frequency">per month</div>
+                        
+                        <div class="card-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Name on supporters page</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Monthly thank you email</span>
+                            </div>
+                        </div>
+                        
+                        <a href="#" class="support-button" onclick="selectMonthlyPlan('Basic', 25000)">Select</a>
+                    </div>
+                </div>
+                
+                <!-- Pro Support -->
+                <div class="support-card">
+                    <div class="card-header" style="background-color: var(--secondary-color);">
+                        <h3>Pro Support</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="amount"><span class="currency">Rp</span> 75.000</div>
+                        <div class="frequency">per month</div>
+                        
+                        <div class="card-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Name on supporters page</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Monthly thank you email</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Early access to new projects</span>
+                            </div>
+                        </div>
+                        
+                        <a href="#" class="support-button" onclick="selectMonthlyPlan('Pro', 75000)">Select</a>
+                    </div>
+                </div>
+                
+                <!-- Premium Support -->
+                <div class="support-card">
+                    <div class="card-header" style="background-color: var(--accent-color);">
+                        <h3>Premium Support</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="amount"><span class="currency">Rp</span> 150.000</div>
+                        <div class="frequency">per month</div>
+                        
+                        <div class="card-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Name on supporters page</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Monthly thank you email</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Early access to new projects</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Monthly 30-min consultation</span>
+                            </div>
+                        </div>
+                        
+                        <a href="#" class="support-button" onclick="selectMonthlyPlan('Premium', 150000)">Select</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Methods Section -->
+            <div class="payment-methods">
+                <h3 class="payment-title">Choose Payment Method</h3>
+                
+                <div class="payment-options">
+                    <!-- DANA -->
+                    <div class="payment-option" data-method="dana" onclick="selectPaymentMethod('dana')">
+                        <div class="payment-icon">
+                            <img src="data:image/jpeg;base64,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" alt="DANA">
+                        </div>
+                        <div class="payment-name">DANA</div>
+                    </div>
+                    
+                    <!-- GoPay -->
+                    <div class="payment-option" data-method="gopay" onclick="selectPaymentMethod('gopay')">
+                        <div class="payment-icon">
+                            <img src="data:image/png;base64,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" alt="GoPay">
+                        </div>
+                        <div class="payment-name">GoPay</div>
+                    </div>
+                    
+                    <!-- OVO -->
+                    <div class="payment-option" data-method="ovo" onclick="selectPaymentMethod('ovo')">
+                        <div class="payment-icon">
+                            <img src="data:image/png;base64,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" alt="OVO">
+                        </div>
+                        <div class="payment-name">OVO</div>
+                    </div>
+                    
+                    <!-- LinkAja -->
+                    <div class="payment-option" data-method="linkaja" onclick="selectPaymentMethod('linkaja')">
+                        <div class="payment-icon">
+                            <img src="data:image/png;base64,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" alt="LinkAja">
+                        </div>
+                        <div class="payment-name">LinkAja</div>
+                    </div>
+                    
+                    <!-- Bank Transfer -->
+                    <div class="payment-option" data-method="bank" onclick="selectPaymentMethod('bank')">
+                        <div class="payment-icon">
+                            <i class="fas fa-university" style="font-size: 28px; color: #3498db;"></i>
+                        </div>
+                        <div class="payment-name">Bank Transfer</div>
+                    </div>
+                    
+                    <!-- QRIS -->
+                    <div class="payment-option" data-method="qris" onclick="selectPaymentMethod('qris')">
+                        <div class="payment-icon">
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAdVBMVEX///8BAQEAAABKSkqGhobBwcHq6ur39/dhYWF9fX3Nzc0WFhavr6+RkZGdnZ0SEhKlpaUnJyfV1dVAQEBoaGjk5OSXl5fd3d2FhYW1tbW+vr7Pz88iIiLHx8dFRUU4ODh4eHhQUFBPT09wcHBYWFgtLS3x8fED3M0bAAADQ0lEQVR4nO3ba0OiQBhAYZgU0zLLxDvWlvn/f+IaeAHmZRgIJafzfESY5qwJE7KeBwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgNsWqSK9tqfWkPs/UOg7X6jUYixpe2ZN2RcO257DZe0Ln9qew2X9ncLo4+5km7w039wZbPrJXsGraS/R6yA+cvyW2jSNN/X+VR9sYVm4Tp1F18lLk8ILSSIZOijZS7KMjxykNyX/Xr2iE7vBs11hb6T8I/VyLPRNDkPvC427CQeq7qEwte1QOKo6mG9d+EBh0dAUCgdSWG00CiksHZpC4cBfVKgTC63ULmxqTWNZmJ5UtcLU+JUKS8f9QeEuyNs964Wetpdk169ZuF/+6vPIKLsXYSgUPAqFdoa1C6MqP0ZwrcIOhfEmCuvobLfff8k6/Dk8kAoX07PhrqhwN7Qx/ahd+GkeubOqX5i5HR4WFV76iv/j66GhcHK+He4bC/OTKnHlVZuxUL3dx0rew1suPNwOd76wRyGFFLZe6PKZJtk4cvd6eLzi+44Wiqs2bbkUZBdkQo/u+N2TXlhh8ddA4XjZPVkm9wrC9KZQK1Qv2hTUZNDNWwZFhZ62b1b0oCX+pNBOpnC7yicaVsZSYZl124V3308g5ROnBUc2WRhGUcnDI40VesK7WPCwR5OFU6W21yr8/vI6n9i5eOGTUvdXK5QS36UjWyxcr8arvORcGkSDk0g4l8aF3lhP/LQsHJiNmykUL2GzeLfM9fCpqFD6LE6sCmtfDysWSomVCqVE/UQgr2kqBtYsFMY5FqY2GQq9mZ74YVdonIY0s5YK9c/i/sXcdyg3Xiidbt6yibdeqP+i+upr51ShN/P1xMCpQuldHKUSHSj0Qj3xMJArhd5M/6bFPyVeubBk6JqFxnfxuoXeV8liwlR4ttHGDYQFUnQsTHlPCktmIbEtDDvzjkE/KCrc9c8HzoVHxsN5fuD5PLlohP3UtuSB4555FuLMBpaFdoTC34FCaxS2xv3CjTuFvVfJWvnuFMoXRd/5QtXUf8Frv9BbPC4kj91mhv8FhRdG4e2j8PYJ97wds0r/SdfQo60AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABA4j/CWGI+qs2J8QAAAABJRU5ErkJggg==" alt="QRIS">
+                        </div>
+                        <div class="payment-name">QRIS</div>
+                    </div>
+                </div>
+                
+                <!-- DANA QR Section -->
+                <div id="dana-qr" class="qr-section">
+                    <div class="qr-code">
+                        <img src="/api/placeholder/200/200" alt="DANA QR Code" class="qr-image">
+                        <h4>Scan to Pay with DANA</h4>
+                        <p>Atau kirim ke nomor berikut</p>
+                        
+                        <div class="account-details">
+                            <div class="account-item">
+                                <div class="account-label">Nomor DANA:</div>
+                                <div class="account-value">0812-3456-7890</div>
+                                <button class="copy-btn" onclick="copyToClipboard('0812-3456-7890')">Copy</button>
+                            </div>
+                            <div class="account-item">
+                                <div class="account-label">Nama:</div>
+                                <div class="account-value">Brian Official</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- GoPay QR Section -->
+                <div id="gopay-qr" class="qr-section">
+                    <div class="qr-code">
+                        <img src="/api/placeholder/200/200" alt="GoPay QR Code" class="qr-image">
+                        <h4>Scan to Pay with GoPay</h4>
+                        <p>Atau kirim ke nomor berikut</p>
+                        
+                        <div class="account-details">
+                            <div class="account-item">
+                                <div class="account-label">Nomor GoPay:</div>
+                                <div class="account-value">0812-3456-7890</div>
+                                <button class="copy-btn" onclick="copyToClipboard('0812-3456-7890')">Copy</button>
+                            </div>
+                            <div class="account-item">
+                                <div class="account-label">Nama:</div>
+                                <div class="account-value">Brian Official</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- OVO QR Section -->
+                <div id="ovo-qr" class="qr-section">
+                    <div class="qr-code">
+                        <img src="/api/placeholder/200/200" alt="OVO QR Code" class="qr-image">
+                        <h4>Scan to Pay with OVO</h4>
+                        <p>Atau kirim ke nomor berikut</p>
+                        
+                        <div class="account-details">
+                            <div class="account-item">
+                                <div class="account-label">Nomor OVO:</div>
+                                <div class="account-value">0812-3456-7890</div>
+                                <button class="copy-btn" onclick="copyToClipboard('0812-3456-7890')">Copy</button>
+                            </div>
+                            <div class="account-item">
+                                <div class="account-label">Nama:</div>
+                                <div class="account-value">Brian Official</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- LinkAja QR Section -->
+                <div id="linkaja-qr" class="qr-section">
+                    <div class="qr-code">
+                        <img src="/api/placeholder/200/200" alt="LinkAja QR Code" class="qr-image">
+                        <h4>Scan to Pay with LinkAja</h4>
+                        <p>Atau kirim ke nomor berikut</p>
+                        
+                        <div class="account-details">
+                            <div class="account-item">
+                                <div class="account-label">Nomor LinkAja:</div>
+                                <div class="account-value">0812-3456-7890</div>
+                                <button class="copy-btn" onclick="copyToClipboard('0812-3456-7890')">Copy</button>
+                            </div>
+                            <div class="account-item">
+                                <div class="account-label">Nama:</div>
+                                <div class="account-value">Brian Official</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bank Transfer Section -->
+                <div id="bank-qr" class="qr-section">
+                    <div class="qr-code">
+                        <h4>Transfer Bank</h4>
+                        <p>Silakan transfer ke rekening berikut</p>
+                        
+                        <div class="account-details">
+                            <div class="account-item">
+                                <div class="account-label">Bank:</div>
+                                <div class="account-value">Bank Central Asia (BCA)</div>
+                            </div>
+                            <div class="account-item">
+                                <div class="account-label">No. Rekening:</div>
+                                <div class="account-value">1234567890</div>
+                                <button class="copy-btn" onclick="copyToClipboard('1234567890')">Copy</button>
+                            </div>
+                            <div class="account-item">
+                                <div class="account-label">Nama:</div>
+                                <div class="account-value">Brian Official</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- QRIS QR Section -->
+                <div id="qris-qr" class="qr-section">
+                    <div class="qr-code">
+                        <img src="/api/placeholder/200/200" alt="QRIS QR Code" class="qr-image">
+                        <h4>Scan to Pay with QRIS</h4>
+                        <p>QRIS dapat digunakan oleh berbagai aplikasi e-wallet</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="donate-btn" onclick="confirmPayment()">Konfirmasi Pembayaran</button>
+                </div>
+            </div>
+            
+            <!-- One-time Donation -->
+            <div class="one-time-donation">
+                <h3 class="donation-title">Atau Berikan Donasi Sekali Waktu</h3>
+                
+                <div class="donation-form">
+                    <div class="amount-options">
+                        <div class="amount-option" onclick="selectAmount(20000)">Rp 20K</div>
+                        <div class="amount-option active" onclick="selectAmount(50000)">Rp 50K</div>
+                        <div class="amount-option" onclick="selectAmount(100000)">Rp 100K</div>
+                        <div class
