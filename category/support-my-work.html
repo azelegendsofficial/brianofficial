@@ -1029,7 +1029,7 @@
             <h3 class="success-title">Pembayaran Berhasil!</h3>
             <p class="success-message">Terima kasih atas dukungan Anda. Email konfirmasi telah dikirim ke alamat email Anda.</p>
             
-            <a href="#" class="return-home">Kembali ke Beranda</a>
+            <a href="/" class="return-home">Kembali ke Beranda</a>
         </div>
     </div>
 </div>
@@ -1041,116 +1041,253 @@
             <p>Jika Anda memiliki pertanyaan tentang donasi, silakan hubungi saya di contact@brianofficial.com</p>
         </div>
         <div class="copyright">
-            &copy; 2023 Brian Official. All rights reserved.
+            &copy; 2025 Brian Official. All rights reserved.
         </div>
     </div>
 </footer>
 
 <script>
     // Toggle FAQ
-    function toggleFAQ(element) {
-        const answer = element.nextElementSibling;
-        answer.classList.toggle('active');
+function toggleFAQ(element) {
+    const answer = element.nextElementSibling;
+    answer.classList.toggle('active');
+}
+
+// Select Payment Method
+function selectPaymentMethod(method) {
+    // Hide all QR sections
+    const qrSections = document.querySelectorAll('.qr-section');
+    qrSections.forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Remove active class from all payment options
+    const paymentOptions = document.querySelectorAll('.payment-option');
+    paymentOptions.forEach(option => {
+        option.classList.remove('active');
+    });
+    
+    // Add active class to selected payment option
+    const selectedOption = document.querySelector(`.payment-option[data-method="${method}"]`);
+    if (selectedOption) {
+        selectedOption.classList.add('active');
     }
     
-    // Select Payment Method
-    function selectPaymentMethod(method) {
-        // Hide all QR sections
-        const qrSections = document.querySelectorAll('.qr-section');
-        qrSections.forEach(section => {
-            section.classList.remove('active');
-        });
-        
-        // Remove active class from all payment options
-        const paymentOptions = document.querySelectorAll('.payment-option');
-        paymentOptions.forEach(option => {
-            option.classList.remove('active');
-        });
-        
-        // Add active class to selected payment option
-        const selectedOption = document.querySelector(`.payment-option[data-method="${method}"]`);
-        selectedOption.classList.add('active');
-        
-        // Show selected QR section
-        const selectedQR = document.getElementById(`${method}-qr`);
+    // Show selected QR section
+    const selectedQR = document.getElementById(`${method}-qr`);
+    if (selectedQR) {
         selectedQR.classList.add('active');
     }
+}
+
+// Select Monthly Plan
+function selectMonthlyPlan(plan, amount) {
+    console.log(`Selected plan: ${plan}, Amount: ${amount}`);
     
-    // Select Monthly Plan
-    function selectMonthlyPlan(plan, amount) {
-        console.log(`Selected plan: ${plan}, Amount: ${amount}`);
-        // Here you would typically handle the plan selection logic
-        // For demonstration purposes, we'll just scroll to payment methods
-        document.querySelector('.payment-methods').scrollIntoView({ behavior: 'smooth' });
+    // Store selected plan in sessionStorage
+    sessionStorage.setItem('selectedPlan', plan);
+    sessionStorage.setItem('selectedAmount', amount);
+    
+    // Scroll to payment methods
+    const paymentMethodsSection = document.querySelector('.payment-methods');
+    if (paymentMethodsSection) {
+        paymentMethodsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Select Donation Amount
+function selectAmount(amount) {
+    // Remove active class from all amount options
+    const amountOptions = document.querySelectorAll('.amount-option');
+    amountOptions.forEach(option => {
+        option.classList.remove('active');
+    });
+    
+    // Find the correct option based on amount
+    let selectedOption;
+    amountOptions.forEach(option => {
+        const optionAmount = parseInt(option.getAttribute('data-amount') || 0);
+        if (optionAmount === amount) {
+            selectedOption = option;
+        }
+    });
+    
+    // Add active class to selected amount option
+    if (selectedOption) {
+        selectedOption.classList.add('active');
     }
     
-    // Select Donation Amount
-    function selectAmount(amount) {
-        // Remove active class from all amount options
-        const amountOptions = document.querySelectorAll('.amount-option');
-        amountOptions.forEach(option => {
-            option.classList.remove('active');
-        });
+    // Store selected amount in sessionStorage
+    sessionStorage.setItem('donationAmount', amount);
+    
+    // Clear custom amount input
+    const customAmountInput = document.getElementById('custom-amount');
+    if (customAmountInput) {
+        customAmountInput.value = '';
+    }
+}
+
+// Handle custom amount input
+function handleCustomAmount(input) {
+    // Remove active class from all amount options
+    const amountOptions = document.querySelectorAll('.amount-option');
+    amountOptions.forEach(option => {
+        option.classList.remove('active');
+    });
+    
+    // Store custom amount in sessionStorage
+    if (input.value) {
+        sessionStorage.setItem('donationAmount', input.value);
+    }
+}
+
+// Copy to Clipboard
+function copyToClipboard(text) {
+    if (!navigator.clipboard) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
         
-        // Add active class to selected amount option
-        const selectedOption = document.querySelector(`.amount-option:nth-child(${amount/50000})`);
-        if (selectedOption) {
-            selectedOption.classList.add('active');
+        try {
+            const successful = document.execCommand('copy');
+            const msg = successful ? 'Copied to clipboard!' : 'Could not copy text';
+            alert(msg);
+        } catch (err) {
+            console.error('Could not copy text: ', err);
+            alert('Could not copy text. Please try again.');
         }
         
-        // Clear custom amount input
-        document.getElementById('custom-amount').value = '';
+        document.body.removeChild(textArea);
+        return;
     }
     
-    // Copy to Clipboard
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert('Copied to clipboard!');
-        }).catch(err => {
-            console.error('Could not copy text: ', err);
-        });
-    }
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Copied to clipboard!');
+    }).catch(err => {
+        console.error('Could not copy text: ', err);
+        alert('Could not copy text. Please try again.');
+    });
+}
+
+// Send WhatsApp message to owner
+function sendWhatsAppMessage(paymentInfo) {
+    const ownerPhone = '085242510587';
+    const message = encodeURIComponent(`New payment received!\n\nPayment Method: ${paymentInfo.method}\nAmount: Rp ${paymentInfo.amount.toLocaleString('id-ID')}\n${paymentInfo.plan ? 'Plan: ' + paymentInfo.plan : 'One-time donation'}\nDate: ${new Date().toLocaleString('id-ID')}`);
     
-    // Confirm Payment
-    function confirmPayment() {
-        const modal = document.getElementById('successModal');
-        modal.classList.add('active');
-    }
+    // Open WhatsApp chat with pre-filled message
+    const whatsappURL = `https://wa.me/${ownerPhone}?text=${message}`;
+    window.open(whatsappURL, '_blank');
+}
+
+// Confirm Payment
+function confirmPayment() {
+    // Get payment details
+    const paymentMethod = document.querySelector('.payment-option.active')?.getAttribute('data-method') || 'unknown';
+    let amount = 0;
+    let plan = sessionStorage.getItem('selectedPlan') || null;
     
-    // Close Modal
-    function closeModal() {
-        const modal = document.getElementById('successModal');
-        modal.classList.remove('active');
-    }
-    
-    // One-time Donation
-    function donateOneTime() {
-        let amount = 0;
+    if (plan) {
+        // For monthly plan
+        amount = parseInt(sessionStorage.getItem('selectedAmount') || 0);
+    } else {
+        // For one-time donation
         const activeAmount = document.querySelector('.amount-option.active');
+        const customAmount = document.getElementById('custom-amount')?.value;
         
         if (activeAmount) {
-            amount = parseInt(activeAmount.textContent.replace(/\D/g, '')) * 1000;
-        } else if (document.getElementById('custom-amount').value) {
-            amount = parseInt(document.getElementById('custom-amount').value);
+            amount = parseInt(activeAmount.getAttribute('data-amount') || 0);
+        } else if (customAmount) {
+            amount = parseInt(customAmount);
         }
-        
-        if (amount < 10000) {
-            alert('Minimum donation is Rp 10.000');
-            return;
-        }
-        
-        // For demonstration, just show success modal
-        confirmPayment();
     }
     
-    // Initialize payment options
-    document.addEventListener('DOMContentLoaded', function() {
-        // Select default payment method
-        selectPaymentMethod('dana');
-        
-        // Select default amount
-        selectAmount(50000);
+    // Validate amount
+    if (!amount || amount < 10000) {
+        alert('Minimum amount is Rp 10.000');
+        return;
+    }
+    
+    // Create payment info object
+    const paymentInfo = {
+        method: paymentMethod,
+        amount: amount,
+        plan: plan
+    };
+    
+    // Send WhatsApp message to owner
+    sendWhatsAppMessage(paymentInfo);
+    
+    // Show success modal
+    const modal = document.getElementById('successModal');
+    if (modal) {
+        modal.classList.add('active');
+    } else {
+        alert('Payment confirmed! Thank you for your payment.');
+    }
+}
+
+// Close Modal
+function closeModal() {
+    const modal = document.getElementById('successModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
+// One-time Donation
+function donateOneTime() {
+    let amount = 0;
+    const activeAmount = document.querySelector('.amount-option.active');
+    const customAmountInput = document.getElementById('custom-amount');
+    
+    if (activeAmount) {
+        amount = parseInt(activeAmount.getAttribute('data-amount') || 0);
+    } else if (customAmountInput && customAmountInput.value) {
+        amount = parseInt(customAmountInput.value);
+    }
+    
+    if (!amount || amount < 10000) {
+        alert('Minimum donation is Rp 10.000');
+        return;
+    }
+    
+    // Store amount for later use
+    sessionStorage.setItem('donationAmount', amount);
+    
+    // Process payment
+    confirmPayment();
+}
+
+// Initialize payment options
+document.addEventListener('DOMContentLoaded', function() {
+    // Select default payment method
+    selectPaymentMethod('dana');
+    
+    // Add data-amount attributes to amount options if they don't exist
+    const amountOptions = document.querySelectorAll('.amount-option');
+    const amounts = [50000, 100000, 150000, 200000];
+    
+    amountOptions.forEach((option, index) => {
+        if (!option.hasAttribute('data-amount') && index < amounts.length) {
+            option.setAttribute('data-amount', amounts[index]);
+        }
     });
+    
+    // Select default amount
+    selectAmount(50000);
+    
+    // Add event listener for custom amount input
+    const customAmountInput = document.getElementById('custom-amount');
+    if (customAmountInput) {
+        customAmountInput.addEventListener('input', function() {
+            handleCustomAmount(this);
+        });
+    }
+});
 </script>
 </body>
 </html>
