@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relationship Status - Brian's Personal Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --accent-color: #e74c3c;
+            --pink-color: #ff79c6;
+            --purple-color: #bd93f9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: var(--dark-color);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            color: var(--primary-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 60px;
+            color: var(--dark-color);
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* Relationship Status Section */
+        .relationship-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 50px;
+        }
+        
+        .status-header {
+            background: linear-gradient(135deg, var(--purple-color), var(--pink-color));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .status-header h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .status-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .status-body {
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 5px solid var(--light-color);
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .status-indicator {
+            width: 120px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 0 auto 25px;
+        }
+        
+        .status-message {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .chat-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+        
+        .chat-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .chat-button i {
+            margin-right: 8px;
+        }
+        
+        /* Map Section */
+        .map-container {
+            margin-top: 40px;
+        }
+        
+        .map-title {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+        
+        #relationship-map {
+            height: 400px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .location-info {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+        }
+        
+        .heart-icon {
+            color: var(--accent-color);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #1a252f;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .footer-content p {
+            margin-bottom: 20px;
+        }
+        
+        .copyright {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Custom Marker */
+        .custom-marker {
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .custom-marker img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .section-title {
+                font-size: 28px;
+                margin-bottom: 40px;
+            }
+            
+            .status-header h2 {
+                font-size: 24px;
+            }
+            
+            .status-message {
+                font-size: 16px;
+            }
+            
+            #relationship-map {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">Brian<span>Official</span></div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/#about">About Me</a></li>
+                <li><a href="/#projects">Projects</a></li>
+                <li><a href="/#income">Income</a></li>
+                <li><a href="/#social">Connect</a></li>
+                <li><a href="status-hubungan.html">Relationship</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <h1 class="section-title">My Relationship Status</h1>
+            
+            <div class="relationship-container">
+                <div class="status-header">
+                    <h2>Current Relationship Status</h2>
+                    <p>Updated on April 10, 2025</p>
+                </div>
+                
+                <div class="status-body">
+                    <div class="profile-image" style="background-image: url('/api/placeholder/150/150')"></div>
+                    
+                    <div class="status-indicator">
+                        <i class="fas fa-heart-broken"></i> Single
+                    </div>
+                    
+                    <p class="status-message">
+                        Currently focusing on my career and personal growth as a young developer at Ivonia SMP Minecraft Server Indonesia. Not in a relationship at the moment, but open to meeting new people!
+                    </p>
+                    
+                    <a href="https://wa.me/?text=Hi%20Brian%20Official!%20I%20saw%20your%20website%20and%20wanted%20to%20connect%20with%20you.%20Would%20love%20to%20chat%20about%20your%20projects!" class="chat-button">
+                        <i class="fab fa-whatsapp"></i> Chat with Brian Official
+                    </a>
+                    
+                    <div class="map-container">
+                        <h3 class="map-title">Where I'm Based <i class="fas fa-map-marker-alt heart-icon"></i></h3>
+                        <div id="relationship-map"></div>
+                        <p class="location-info">
+                            <i class="fas fa-home"></i> Currently living in Serui, Papua, Indonesia
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>Thank you for visiting my personal website. Feel free to reach out through any of my social media channels!</p>
+                <div class="copyright">
+                    © 2025 BrianOfficial. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('relationship-map').setView([-1.9883, 136.2615], 13); // Serui, Papua coordinates
+        
+        // Add the tile layer (map background)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
+        
+        // Create a custom marker with profile image
+        var customIcon = L.divIcon({
+            className: 'custom-marker',
+            html: '<img src="/api/placeholder/60/60" alt="Brian Profile">',
+            iconSize: [60, 60],
+            iconAnchor: [30, 30]
+        });
+        
+        // Add the marker to the map
+        var marker = L.marker([-1.9883, 136.2615], {icon: customIcon}).addTo(map)
+            .bindPopup('<strong>Brian Official</strong><br>Serui, Papua, Indonesia')
+            .openPopup();
+        
+        // Add zoom control
+        map.zoomControl.setPosition('bottomright');
+        
+        // Enable scroll wheel zoom
+        map.scrollWheelZoom.enable();
+        
+        // Update map size when the page loads
+        window.addEventListener('load', function() {
+            map.invalidateSize();
+        });
+    </script>
+</body>
+</html>
