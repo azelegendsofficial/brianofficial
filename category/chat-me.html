@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Number List</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --accent-color: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .search-container {
+            padding: 15px;
+            background-color: #f5f8fa;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .list-container {
+            padding: 0;
+        }
+        
+        .list-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .list-item:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .item-number {
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+        
+        .item-contact {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+        
+        .contact-label {
+            background-color: #eee;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        
+        .status {
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+        
+        .status.active {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+        
+        .status.inactive {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #777;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+        
+        .btn:hover {
+            color: var(--primary-color);
+        }
+        
+        .btn.call:hover {
+            color: var(--secondary-color);
+        }
+        
+        .btn.message:hover {
+            color: var(--accent-color);
+        }
+        
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: #777;
+        }
+        
+        .empty-state i {
+            font-size: 50px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+        
+        .empty-state p {
+            font-size: 14px;
+        }
+        
+        .footer {
+            padding: 15px;
+            text-align: center;
+            background-color: #f5f8fa;
+            font-size: 12px;
+            color: #777;
+        }
+        
+        @media (max-width: 480px) {
+            .item-details {
+                flex-direction: column;
+            }
+            
+            .item-contact {
+                margin-top: 5px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Contact Number List</h1>
+            <p>All owner contact numbers in one place</p>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" class="search-box" id="searchBox" placeholder="Search by name or number...">
+        </div>
+        
+        <div class="list-container" id="contactList">
+            <!-- Contact Item 1 -->
+            <div class="list-item">
+                <div class="item-number">1</div>
+                <div class="item-details">
+                    <div class="item-name">Ahmad Fauzi</div>
+                    <div class="item-contact">
+                        <span class="contact-label">Phone</span>
+                        +62 812-3456-7890
+                        <span class="status active">Active</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn call" title="Call"><i class="fas fa-phone"></i></button>
+                    <button class="btn message" title="Message"><i class="fas fa-comment"></i></button>
+                    <button class="btn" title="Copy"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+            
+            <!-- Contact Item 2 -->
+            <div class="list-item">
+                <div class="item-number">2</div>
+                <div class="item-details">
+                    <div class="item-name">Budi Santoso</div>
+                    <div class="item-contact">
+                        <span class="contact-label">Phone</span>
+                        +62 813-9876-5432
+                        <span class="status active">Active</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn call" title="Call"><i class="fas fa-phone"></i></button>
+                    <button class="btn message" title="Message"><i class="fas fa-comment"></i></button>
+                    <button class="btn" title="Copy"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+            
+            <!-- Contact Item 3 -->
+            <div class="list-item">
+                <div class="item-number">3</div>
+                <div class="item-details">
+                    <div class="item-name">Citra Dewi</div>
+                    <div class="item-contact">
+                        <span class="contact-label">Phone</span>
+                        +62 857-1234-5678
+                        <span class="status inactive">Inactive</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn call" title="Call"><i class="fas fa-phone"></i></button>
+                    <button class="btn message" title="Message"><i class="fas fa-comment"></i></button>
+                    <button class="btn" title="Copy"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+            
+            <!-- Contact Item 4 -->
+            <div class="list-item">
+                <div class="item-number">4</div>
+                <div class="item-details">
+                    <div class="item-name">Dian Pratama</div>
+                    <div class="item-contact">
+                        <span class="contact-label">Phone</span>
+                        +62 878-8765-4321
+                        <span class="status active">Active</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn call" title="Call"><i class="fas fa-phone"></i></button>
+                    <button class="btn message" title="Message"><i class="fas fa-comment"></i></button>
+                    <button class="btn" title="Copy"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+            
+            <!-- Contact Item 5 -->
+            <div class="list-item">
+                <div class="item-number">5</div>
+                <div class="item-details">
+                    <div class="item-name">Eko Wijaya</div>
+                    <div class="item-contact">
+                        <span class="contact-label">Phone</span>
+                        +62 896-5432-1098
+                        <span class="status active">Active</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn call" title="Call"><i class="fas fa-phone"></i></button>
+                    <button class="btn message" title="Message"><i class="fas fa-comment"></i></button>
+                    <button class="btn" title="Copy"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+            
+            <!-- Contact Item 6 -->
+            <div class="list-item">
+                <div class="item-number">6</div>
+                <div class="item-details">
+                    <div class="item-name">Fitri Handayani</div>
+                    <div class="item-contact">
+                        <span class="contact-label">Phone</span>
+                        +62 819-2345-6789
+                        <span class="status inactive">Inactive</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn call" title="Call"><i class="fas fa-phone"></i></button>
+                    <button class="btn message" title="Message"><i class="fas fa-comment"></i></button>
+                    <button class="btn" title="Copy"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+            
+            <!-- Contact Item 7 -->
+            <div class="list-item">
+                <div class="item-number">7</div>
+                <div class="item-details">
+                    <div class="item-name">Gunawan Setiawan</div>
+                    <div class="item-contact">
+                        <span class="contact-label">Phone</span>
+                        +62 838-7654-3210
+                        <span class="status active">Active</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn call" title="Call"><i class="fas fa-phone"></i></button>
+                    <button class="btn message" title="Message"><i class="fas fa-comment"></i></button>
+                    <button class="btn" title="Copy"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+            
+            <!-- Contact Item 8 -->
+            <div class="list-item">
+                <div class="item-number">8</div>
+                <div class="item-details">
+                    <div class="item-name">Hani Permata</div>
+                    <div class="item-contact">
+                        <span class="contact-label">Phone</span>
+                        +62 851-9876-5432
+                        <span class="status active">Active</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn call" title="Call"><i class="fas fa-phone"></i></button>
+                    <button class="btn message" title="Message"><i class="fas fa-comment"></i></button>
+                    <button class="btn" title="Copy"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <i class="fas fa-search"></i>
+            <p>No matching contacts found</p>
+        </div>
+        
+        <div class="footer">
+            <p>Updated: April 10, 2025 | Total Contacts: 8</p>
+        </div>
+    </div>
+    
+    <script>
+        // Search functionality
+        const searchBox = document.getElementById('searchBox');
+        const contactList = document.getElementById('contactList');
+        const listItems = contactList.getElementsByClassName('list-item');
+        const emptyState = document.getElementById('emptyState');
+        
+        searchBox.addEventListener('keyup', function() {
+            const searchTerm = searchBox.value.toLowerCase();
+            let matchCount = 0;
+            
+            for (let i = 0; i < listItems.length; i++) {
+                const item = listItems[i];
+                const name = item.querySelector('.item-name').textContent.toLowerCase();
+                const contact = item.querySelector('.item-contact').textContent.toLowerCase();
+                
+                if (name.includes(searchTerm) || contact.includes(searchTerm)) {
+                    item.style.display = '';
+                    matchCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            }
+            
+            // Show/hide empty state
+            if (matchCount === 0) {
+                emptyState.style.display = 'block';
+                contactList.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                contactList.style.display = 'block';
+            }
+        });
+        
+        // Copy functionality
+        const copyButtons = document.querySelectorAll('.btn[title="Copy"]');
+        
+        copyButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const contactText = this.parentElement.previousElementSibling.querySelector('.item-contact').textContent.trim();
+                const phoneNumber = contactText.match(/\+\d+[\d\s-]+/)[0].trim();
+                
+                navigator.clipboard.writeText(phoneNumber).then(() => {
+                    // Show temporary copied indicator
+                    const originalIcon = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i>';
+                    this.style.color = var(--secondary-color);
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalIcon;
+                        this.style.color = '';
+                    }, 1500);
+                });
+            });
+        });
+        
+        // Call and message functionality (simulated)
+        const callButtons = document.querySelectorAll('.btn.call');
+        const messageButtons = document.querySelectorAll('.btn.message');
+        
+        callButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const contactText = this.parentElement.previousElementSibling.querySelector('.item-contact').textContent;
+                const phoneNumber = contactText.match(/\+\d+[\d\s-]+/)[0].trim();
+                window.location.href = `tel:${phoneNumber.replace(/\s+/g, '')}`;
+            });
+        });
+        
+        messageButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const contactText = this.parentElement.previousElementSibling.querySelector('.item-contact').textContent;
+                const phoneNumber = contactText.match(/\+\d+[\d\s-]+/)[0].trim();
+                window.location.href = `sms:${phoneNumber.replace(/\s+/g, '')}`;
+            });
+        });
+    </script>
+</body>
+</html>
