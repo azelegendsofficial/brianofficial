@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>project</title>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #4f46e5;
+            --text-color: #f8fafc;
+            --bg-color: #0f172a;
+            --sidebar-color: #1e293b;
+            --accent-color: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .edit-section {
+            margin-top: 20px;
+            opacity: 0.3;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .edit-section.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .edit-group {
+            margin-bottom: 20px;
+        }
+
+        .edit-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .option-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover, .option-btn.active {
+            background-color: var(--primary-color);
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-option:hover, .color-option.active {
+            transform: scale(1.1);
+            border-color: white;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+        }
+
+        .lyrics-container {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .lyrics {
+            font-size: 24px;
+            line-height: 1.6;
+            white-space: pre-line;
+            transition: all 0.3s ease;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--sidebar-color);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            padding: 10px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Text effects */
+        .effect-neon {
+            text-shadow: 0 0 5px var(--primary-color),
+                        0 0 10px var(--primary-color),
+                        0 0 20px var(--primary-color);
+        }
+
+        .effect-shadow {
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .effect-gradient {
+            background: linear-gradient(90deg, #ff00cc, #3333ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent !important;
+        }
+
+        .effect-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Range sliders */
+        .slider-container {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-label {
+            width: 100px;
+            font-size: 14px;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            max-width: 400px;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .empty-state p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-height: 40%;
+                overflow-y: auto;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 9l-7 4-7-4V8l7 4 7-4m0-1v9l-7 4-7-4V8l7 4 7-4z" fill="currentColor"/>
+            </svg>
+            Project 
+        </div>
+        
+        <button id="uploadBtn" class="upload-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 16v-8h2v8h-2zm-6-6h-2v6h2v-6zm-6 9h16v2h-16v-2zm2-11h2v8h-2v-8zm10 0h2v8h-2v-8z" fill="currentColor"/>
+            </svg>
+            Upload Song File
+        </button>
+        <input type="file" id="fileInput" style="display: none;" accept="audio/*">
+        
+        <div id="editSection" class="edit-section">
+            <div class="edit-group">
+                <div class="edit-title">Text Style</div>
+                <div class="options">
+                    <button class="option-btn active" data-style="normal">Normal</button>
+                    <button class="option-btn" data-style="bold">Bold</button>
+                    <button class="option-btn" data-style="italic">Italic</button>
+                </div>
+            </div>
+            
+            <div class="edit-group">
+                <div class="edit-title">Text Color</div>
+                <div class="options">
+                    <div class="color-option active" style="background-color: #f8fafc;" data-color="#f8fafc"></div>
+                    <div class="color-option" style="background-color: #ff6b6b;" data-color="#ff6b6b"></div>
+                    <div class="color-option" style="background-color: #5eead4;" data-color="#5eead4"></div>
+                    <div class="color-option" style="background-color: #fcd34d;" data-color="#fcd34d"></div>
+                    <div class="color-option" style="background-color: #a78bfa;" data-color="#a78bfa"></div>
+                </div>
+            </div>
+            
+            <div class="edit-group">
+                <div class="edit-title">Background</div>
+                <div class="options">
+                    <button class="option-btn active" data-bg="none">None</button>
+                    <button class="option-btn" data-bg="gradient">Gradient</button>
+                    <button class="option-btn" data-bg="stars">Stars</button>
+                    <button class="option-btn" data-bg="particles">Particles</button>
+                </div>
+            </div>
+            
+            <div class="edit-group">
+                <div class="edit-title">Text Effect</div>
+                <div class="options">
+                    <button class="option-btn active" data-effect="none">None</button>
+                    <button class="option-btn" data-effect="neon">Neon</button>
+                    <button class="option-btn" data-effect="shadow">Shadow</button>
+                    <button class="option-btn" data-effect="gradient">Gradient</button>
+                    <button class="option-btn" data-effect="pulse">Pulse</button>
+                </div>
+            </div>
+            
+            <div class="edit-group">
+                <div class="edit-title">Text Size</div>
+                <div class="slider-container">
+                    <div class="slider-row">
+                        <span class="slider-label">Size</span>
+                        <input type="range" min="16" max="48" value="24" class="slider" id="textSizeSlider">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div id="emptyState" class="empty-state">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto 20px; opacity: 0.5;">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" fill="currentColor"/>
+            </svg>
+            <h2>No Song Selected</h2>
+            <p>Upload an audio file from the sidebar to view and customize its lyrics.</p>
+        </div>
+        
+        <div id="lyricsContainer" class="lyrics-container" style="display: none;">
+            <div id="lyrics" class="lyrics"></div>
+        </div>
+    </div>
+    
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="modal">
+        <div class="modal-content">
+            <div class="loading-spinner"></div>
+            <h3>Sedang Memuat Lagu</h3>
+            <p>Mohon tunggu sebentar...</p>
+        </div>
+    </div>
+    
+    <!-- Best Part Modal -->
+    <div id="bestPartModal" class="modal">
+        <div class="modal-content">
+            <h3>Mau ambil bagian terkeren nya?</h3>
+            <div class="modal-buttons">
+                <button id="yesBestPartBtn" class="modal-btn btn-primary">Ya</button>
+                <button id="noBestPartBtn" class="modal-btn btn-secondary">Tidak</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DOM Elements
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInput = document.getElementById('fileInput');
+        const editSection = document.getElementById('editSection');
+        const lyricsContainer = document.getElementById('lyricsContainer');
+        const lyricsElement = document.getElementById('lyrics');
+        const emptyState = document.getElementById('emptyState');
+        const loadingModal = document.getElementById('loadingModal');
+        const bestPartModal = document.getElementById('bestPartModal');
+        const yesBestPartBtn = document.getElementById('yesBestPartBtn');
+        const noBestPartBtn = document.getElementById('noBestPartBtn');
+        const textSizeSlider = document.getElementById('textSizeSlider');
+        
+        // Variables
+        let currentSong = null;
+        let hasLyrics = false;
+        
+        // Event Listeners
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                uploadSong(file);
+            }
+        });
+        
+        yesBestPartBtn.addEventListener('click', () => {
+            showBestPart();
+            bestPartModal.style.display = 'none';
+        });
+        
+        noBestPartBtn.addEventListener('click', () => {
+            showFullLyrics();
+            bestPartModal.style.display = 'none';
+        });
+        
+        textSizeSlider.addEventListener('input', () => {
+            lyricsElement.style.fontSize = `${textSizeSlider.value}px`;
+        });
+        
+        // Style buttons click handlers
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const category = this.parentElement.parentElement.querySelector('.edit-title').textContent.toLowerCase();
+                // Remove active class from siblings
+                this.parentElement.querySelectorAll('.option-btn').forEach(el => {
+                    el.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Apply the selected style
+                if (category.includes('text style')) {
+                    applyTextStyle(this.dataset.style);
+                } else if (category.includes('background')) {
+                    applyBackground(this.dataset.bg);
+                } else if (category.includes('text effect')) {
+                    applyTextEffect(this.dataset.effect);
+                }
+            });
+        });
+        
+        // Color options click handlers
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.color-option').forEach(el => {
+                    el.classList.remove('active');
+                });
+                this.classList.add('active');
+                lyricsElement.style.color = this.dataset.color;
+            });
+        });
+        
+        // Functions
+        function uploadSong(file) {
+            // Show loading modal
+            loadingModal.style.display = 'flex';
+            
+            // Simulate audio processing
+            setTimeout(() => {
+                loadingModal.style.display = 'none';
+                
+                // Determine if the song has lyrics (simulated)
+                // In a real app, this would be determined by actual audio processing
+                const songName = file.name.toLowerCase();
+                hasLyrics = !songName.includes('instrumental') && Math.random() > 0.2;
+                
+                if (hasLyrics) {
+                    // Enable lyrics editing
+                    editSection.classList.add('active');
+                    
+                    // Show best part modal
+                    bestPartModal.style.display = 'flex';
+                    
+                    // Hide empty state and show lyrics container
+                    emptyState.style.display = 'none';
+                    lyricsContainer.style.display = 'flex';
+                    
+                    // Set current song
+                    currentSong = {
+                        name: file.name,
+                        file: file,
+                        hasLyrics: true
+                    };
+                } else {
+                    // Disable lyrics editing
+                    editSection.classList.remove('active');
+                    
+                    // Hide empty state and show lyrics container
+                    emptyState.style.display = 'none';
+                    lyricsContainer.style.display = 'flex';
+                    
+                    // Display no lyrics message
+                    lyricsElement.textContent = "This song has no lyrics (instrumental track)";
+                    
+                    // Set current song
+                    currentSong = {
+                        name: file.name,
+                        file: file,
+                        hasLyrics: false
+                    };
+                }
+            }, 2000);
+        }
+        
+        function showBestPart() {
+            // In a real app, this would be determined by actual audio analysis
+            const lyrics = `[Best part of the song]
+
+This is the most catchy part of the song
+Where the rhythm takes control
+The melody flows through your soul
+And you can't help but sing along
+
+This is where the music peaks
+The chorus that everybody seeks
+The part you'll remember for weeks
+The section where the artist speaks`;
+
+            lyricsElement.textContent = lyrics;
+        }
+        
+        function showFullLyrics() {
+            // In a real app, this would be the actual lyrics retrieved from a service
+            const lyrics = `Verse 1
+This is the first verse of the song
+Words flow like a gentle stream
+Telling stories untold
+Paint pictures yet unseen
+
+Pre-Chorus
+Building up momentum
+Getting ready for what's to come
+Increasing the tension
+Until we reach the sun
+
+Chorus
+This is the most catchy part of the song
+Where the rhythm takes control
+The melody flows through your soul
+And you can't help but sing along
+
+Verse 2
+Back to the story's flow
+Different words, same emotion
+Deeper meaning starting to show
+Creating waves in this sonic ocean
+
+Bridge
+Changing pace and direction
+A moment of pure reflection
+Different chords, different progression
+Leading to the final confession
+
+Chorus
+This is the most catchy part of the song
+Where the rhythm takes control
+The melody flows through your soul
+And you can't help but sing along
+
+Outro
+Slowly fading into silence
+Leaving memories in your mind
+A song that touched your heart
+Will stay with you for all time`;
+
+            lyricsElement.textContent = lyrics;
+        }
+        
+        function applyTextStyle(style) {
+            lyricsElement.style.fontWeight = style === 'bold' ? 'bold' : 'normal';
+            lyricsElement.style.fontStyle = style === 'italic' ? 'italic' : 'normal';
+        }
+        
+        function applyBackground(bg) {
+            // Reset background
+            document.body.style.background = 'var(--bg-color)';
+            
+            if (bg === 'gradient') {
+                document.body.style.background = 'linear-gradient(135deg, #1e3a8a, #581c87)';
+            } else if (bg === 'stars') {
+                document.body.style.background = 'var(--bg-color)';
+                createStarryBackground();
+            } else if (bg === 'particles') {
+                document.body.style.background = 'var(--bg-color)';
+                createParticleBackground();
+            }
+        }
+        
+        function applyTextEffect(effect) {
+            // Reset all effects
+            lyricsElement.classList.remove('effect-neon', 'effect-shadow', 'effect-gradient', 'effect-pulse');
+            
+            if (effect !== 'none') {
+                lyricsElement.classList.add(`effect-${effect}`);
+            }
+        }
+        
+        function createStarryBackground() {
+            // Clear any existing canvas
+            const existingCanvas = document.getElementById('bgCanvas');
+            if (existingCanvas) {
+                existingCanvas.remove();
+            }
+            
+            const canvas = document.createElement('canvas');
+            canvas.id = 'bgCanvas';
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.zIndex = '-1';
+            document.body.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas dimensions
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Create stars
+            const stars = [];
+            for (let i = 0; i < 200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5,
+                    opacity: Math.random() * 0.8 + 0.2,
+                    speed: Math.random() * 0.05
+                });
+            }
+            
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw stars
+                stars.forEach(star => {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                    ctx.fill();
+                    
+                    // Twinkle effect
+                    star.opacity += Math.random() * 0.02 - 0.01;
+                    if (star.opacity < 0.2) star.opacity = 0.2;
+                    if (star.opacity > 1) star.opacity = 1;
+                    
+                    // Move stars
+                    star.y += star.speed;
+                    if (star.y > canvas.height) {
+                        star.y = 0;
+                        star.x = Math.random() * canvas.width;
+                    }
+                });
+                
+                requestAnimationFrame(draw);
+            }
+            
+            draw();
+        }
+        
+        function createParticleBackground() {
+            // Clear any existing canvas
+            const existingCanvas = document.getElementById('bgCanvas');
+            if (existingCanvas) {
+                existingCanvas.remove();
+            }
+            
+            const canvas = document.createElement('canvas');
+            canvas.id = 'bgCanvas';
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.zIndex = '-1';
+            document.body.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas dimensions
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Create particles
+            const particles = [];
+            for (let i = 0; i < 50; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 3 + 1,
+                    color: `hsla(${Math.random() * 60 + 220}, 80%, 60%, 0.6)`,
+                    speedX: Math.random() * 0.6 - 0.3,
+                    speedY: Math.random() * 0.6 - 0.3
+                });
+            }
+            
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw particles
+                particles.forEach(particle => {
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = particle.color;
+                    ctx.fill();
+                    
+                    // Move particles
+                    particle.x += particle.speedX;
+                    particle.y += particle.speedY;
+                    
+                    // Bounce off edges
+                    if (particle.x < 0 || particle.x > canvas.width) {
+                        particle.speedX = -particle.speedX;
+                    }
+                    if (particle.y < 0 || particle.y > canvas.height) {
+                        particle.speedY = -particle.speedY;
+                    }
+                });
+                
+                // Draw connections
+                particles.forEach((p1, i) => {
+                    particles.slice(i + 1).forEach(p2 => {
+                        const dx = p1.x - p2.x;
+                        const dy = p1.y - p2.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.strokeStyle = `rgba(99, 102, 241, ${0.2 * (1 - distance / 150)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    });
+                });
+                
+                requestAnimationFrame(draw);
+            }
+            
+            draw();
+        }
+    </script>
+</body>
+</html>
