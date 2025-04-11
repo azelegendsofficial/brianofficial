@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Maps</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            background-color: #f0f0f0;
+            background-image: url('/api/placeholder/1200/800');
+            background-size: cover;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .welcome-content {
+            max-width: 600px;
+        }
+
+        .welcome-screen h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .welcome-screen p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 60px;
+            background-color: #222;
+            z-index: 100;
+            transition: width 0.3s ease;
+            overflow: hidden;
+        }
+
+        .navbar:hover {
+            width: 220px;
+        }
+
+        .navbar-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-item:hover {
+            background-color: #2c2c2c;
+        }
+
+        .navbar-item i {
+            font-size: 1.5rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        .navbar-item span {
+            margin-left: 15px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .navbar:hover .navbar-item span {
+            opacity: 1;
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            left: 60px;
+            height: 100%;
+            width: 0;
+            background-color: #333;
+            z-index: 99;
+            transition: width 0.3s ease;
+            overflow-y: auto;
+            color: white;
+        }
+
+        .settings-panel.active {
+            width: 300px;
+        }
+
+        .settings-section {
+            padding: 20px;
+            border-bottom: 1px solid #444;
+        }
+
+        .settings-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .settings-item:hover {
+            color: #4CAF50;
+        }
+
+        .settings-item i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Popups */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 200;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .popup-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .popup-close {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #777;
+            transition: color 0.3s ease;
+        }
+
+        .popup-close:hover {
+            color: #333;
+        }
+
+        .popup-content {
+            padding: 20px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 150;
+            display: none;
+        }
+
+        /* Map Controls */
+        .map-controls {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .map-control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .map-control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .map-type-control {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .map-type-btn {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .map-type-btn.active {
+            background-color: #f0f0f0;
+            font-weight: 600;
+        }
+
+        .map-type-btn:hover:not(.active) {
+            background-color: #f9f9f9;
+        }
+
+        .satellite-options {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            display: none;
+        }
+
+        .satellite-options.visible {
+            display: block;
+        }
+
+        .satellite-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .satellite-option:last-child {
+            margin-bottom: 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Layer Popup Options */
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .option-item:last-child {
+            border-bottom: none;
+        }
+
+        .option-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-title {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .option-desc {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+            margin: 15px 0 10px 0;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+        <h2>Loading Maps...</h2>
+    </div>
+
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-content">
+            <h1>Selamat Datang di Modern Maps</h1>
+            <p>Jelajahi dunia dengan pengalaman peta yang lebih modern, lebih cepat, dan lebih intuitif. Temukan tempat-tempat baru, rute terbaik, dan fitur-fitur canggih lainnya.</p>
+            <div>
+                <button class="btn btn-primary" id="startButton">Mulai Sekarang</button>
+                <button class="btn btn-secondary" id="learnMoreButton">Learn More</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="navbar-item" id="settingsButton">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </div>
+        <div class="navbar-item">
+            <i class="fas fa-mobile-alt"></i>
+            <span>Dapatkan Aplikasi</span>
+        </div>
+        <div class="navbar-item">
+            <i class="fas fa-search"></i>
+            <span>Cari</span>
+        </div>
+        <div class="navbar-item">
+            <i class="fas fa-directions"></i>
+            <span>Rute</span>
+        </div>
+        <div class="navbar-item">
+            <i class="fas fa-bookmark"></i>
+            <span>Tersimpan</span>
+        </div>
+        <div class="navbar-item">
+            <i class="fas fa-history"></i>
+            <span>Riwayat</span>
+        </div>
+        <div class="navbar-item">
+            <i class="fas fa-user-circle"></i>
+            <span>Profil</span>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-section">
+            <div class="settings-title">Pengaturan Peta</div>
+            <div class="settings-item" id="layerSettingsButton">
+                <i class="fas fa-layer-group"></i>
+                <span>Settings Lapisan</span>
+            </div>
+            <div class="settings-item">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Tampilan Peta</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Layer Settings Popup -->
+    <div class="popup" id="layerSettingsPopup">
+        <div class="popup-header">
+            <div class="popup-title">Settings Lapisan</div>
+            <div class="popup-close" id="closeLayerSettings">&times;</div>
+        </div>
+        <div class="popup-content">
+            <div class="section-title">Detail Peta</div>
+            
+            <div class="option-item">
+                <div class="option-icon">
+                    <i class="fas fa-mountain"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Medan</div>
+                    <div class="option-desc">Tampilkan kontur dan elevasi terrain</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="option-item">
+                <div class="option-icon">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Lalu Lintas</div>
+                    <div class="option-desc">Tampilkan kondisi lalu lintas real-time</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="option-item">
+                <div class="option-icon">
+                    <i class="fas fa-bicycle"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Bersepeda</div>
+                    <div class="option-desc">Tampilkan jalur bersepeda</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="option-item">
+                <div class="option-icon">
+                    <i class="fas fa-bus"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Transportasi Umum</div>
+                    <div class="option-desc">Tampilkan rute dan stasiun transportasi</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="option-item">
+                <div class="option-icon">
+                    <i class="fas fa-street-view"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Street View</div>
+                    <div class="option-desc">Tampilkan lokasi dengan Street View</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="option-item">
+                <div class="option-icon">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Kebakaran Hutan</div>
+                    <div class="option-desc">Tampilkan area kebakaran aktif</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="option-item">
+                <div class="option-icon">
+                    <i class="fas fa-wind"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Kualitas Udara</div>
+                    <div class="option-desc">Tampilkan indeks kualitas udara</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="section-title">Alat Peta</div>
+            
+            <div class="option-item">
+                <div class="option-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Waktu Tempuh</div>
+                    <div class="option-desc">Hitung estimasi waktu perjalanan</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="option-item">
+                <div class="option-icon">
+                    <i class="fas fa-ruler"></i>
+                </div>
+                <div class="option-content">
+                    <div class="option-title">Ukur</div>
+                    <div class="option-desc">Ukur jarak antar titik</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Map Container -->
+    <div id="map">
+        <!-- Map Type Control -->
+        <div class="map-type-control">
+            <div class="map-type-btn active" id="defaultMapBtn">Default</div>
+            <div class="map-type-btn" id="satelliteMapBtn">Satelit</div>
+        </div>
+
+        <!-- Satellite Options -->
+        <div class="satellite-options" id="satelliteOptions">
+            <div class="satellite-option">
+                <label class="switch">
+                    <input type="checkbox" id="showClouds">
+                    <span class="slider"></span>
+                </label>
+                <span>Tampilkan Awan</span>
+            </div>
+            <div class="satellite-option">
+                <label class="switch">
+                    <input type="checkbox" id="showRain">
+                    <span class="slider"></span>
+                </label>
+                <span>Tampilkan Daerah Yang Sedang Hujan</span>
+            </div>
+            <div class="satellite-option">
+                <label class="switch">
+                    <input type="checkbox" id="showWaves">
+                    <span class="slider"></span>
+                </label>
+                <span>Tampilkan Gelombang Laut 3D</span>
+            </div>
+            <div class="satellite-option">
+                <label class="switch">
+                    <input type="checkbox" id="showBuildings">
+                    <span class="slider"></span>
+                </label>
+                <span>Tampilkan Gedung 3D</span>
+            </div>
+            <div class="satellite-option">
+                <label class="switch">
+                    <input type="checkbox" id="showMountains">
+                    <span class="slider"></span>
+                </label>
+                <span>Tampilkan Gunung 3D</span>
+            </div>
+        </div>
+
+        <!-- Map Controls -->
+        <div class="map-controls">
+            <div class="map-control-btn" id="zoomIn">
+                <i class="fas fa-plus"></i>
+            </div>
+            <div class="map-control-btn" id="zoomOut">
+                <i class="fas fa-minus"></i>
+            </div>
+            <div class="map-control-btn" id="satelliteSettings">
+                <i class="fas fa-cog"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Loading and Welcome Screen Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate loading
+            setTimeout(function() {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('welcomeScreen').style.display = 'flex';
+            }, 2000);
+            
+            // Start button
+            document.getElementById('startButton').addEventListener('click', function() {
+                document.getElementById('welcomeScreen').style.display = 'none';
+            });
+            
+            // Learn More button (just closes welcome screen for demo)
+            document.getElementById('learnMoreButton').addEventListener('click', function() {
+                document.getElementById('welcomeScreen').style.display = 'none';
+            });
+            
+            // Settings Panel
+            document.getElementById('settingsButton').addEventListener('click', function() {
+                document.getElementById('settingsPanel').classList.toggle('active');
+            });
+            
+            // Layer Settings Popup
+            document.getElementById('layerSettingsButton').addEventListener('click', function() {
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById('layerSettingsPopup').style.display = 'block';
+            });
+            
+            document.getElementById('closeLayerSettings').addEventListener('click', function() {
+                document.getElementById('overlay').style.display = 'none';
+                document.getElementById('layerSettingsPopup').style.display = 'none';
+            });
+            
+            // Close popups when clicking overlay
+            document.getElementById('overlay').addEventListener('click', function() {
+                document.getElementById('overlay').style.display = 'none';
+                document.getElementById('layerSettingsPopup').style.display = 'none';
+            });
+            
+            // Map Type Controls
+            document.getElementById('defaultMapBtn').addEventListener('click', function() {
+                this.classList.add('active');
+                document.getElementById('satelliteMapBtn').classList.remove('active');
+                document.getElementById('map').style.backgroundImage = "url('/api/placeholder/1200/800')";
+                document.getElementById('satelliteOptions').classList.remove('visible');
+                document.getElementById('satelliteSettings').style.display = 'none';
+            });
+            
+            document.getElementById('satelliteMapBtn').addEventListener('click', function() {
+                this.classList.add('active');
+                document.getElementById('defaultMapBtn').classList.remove('active');
+                document.getElementById('map').style.backgroundImage = "url('/api/placeholder/1200/800?text=Satellite View')";
+                document.getElementById('satelliteSettings').style.display = 'flex';
+            });
+            
+            // Satellite Settings
+            document.getElementById('satelliteSettings').addEventListener('click', function() {
+                document.getElementById('satelliteOptions').classList.toggle('visible');
+            });
+            
+            // Zoom Controls (dummy functionality)
+            document.getElementById('zoomIn').addEventListener('click', function() {
+                alert('Zoom in functionality would go here');
+            });
+            
+            document.getElementById('zoomOut').addEventListener('click', function() {
+                alert('Zoom out functionality would go here');
+            });
+            
+            // Initialize with satellite settings button hidden
+            document.getElementById('satelliteSettings').style.display = 'none';
+            
+            // Satellite option toggles (dummy functionality)
+            const satelliteToggles = [
+                'showClouds', 'showRain', 'showWaves', 'showBuildings', 'showMountains'
+            ];
+            
+            satelliteToggles.forEach(id => {
+                document.getElementById(id).addEventListener('change', function() {
+                    const feature = this.id.replace('show', '');
+                    if (this.checked) {
+                        alert(`${feature} layer enabled`);
+                    } else {
+                        alert(`${feature} layer disabled`);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
