@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan QRIS - Brian's Personal Website</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --accent-color: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: var(--dark-color);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            color: var(--primary-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding-top: 100px;
+            min-height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .qris-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .qris-title {
+            color: var(--dark-color);
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        .qris-subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .qris-code {
+            margin: 0 auto 30px;
+            width: 250px;
+            height: 250px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .qris-image {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .qris-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .qris-instructions {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .qris-instructions ol {
+            padding-left: 20px;
+        }
+        
+        .qris-instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .button {
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .primary-button {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .primary-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .secondary-button {
+            background-color: white;
+            color: var(--dark-color);
+            border: 1px solid var(--dark-color);
+        }
+        
+        .secondary-button:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #1a252f;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        
+        .copyright {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Modal for payment success */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background-color: white;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            padding: 30px;
+            text-align: center;
+            transform: translateY(-50px);
+            transition: all 0.3s;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .success-icon {
+            font-size: 60px;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+        
+        .modal-message {
+            color: #666;
+            margin-bottom: 25px;
+        }
+        
+        .modal-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .qris-container {
+                padding: 30px 20px;
+                margin: 0 20px;
+            }
+            
+            .qris-code {
+                width: 200px;
+                height: 200px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">Brian<span>Official</span></div>
+            <ul class="nav-links">
+                <li><a href="/#home">Home</a></li>
+                <li><a href="/#about">About Me</a></li>
+                <li><a href="/#projects">Projects</a></li>
+                <li><a href="/#income">Income</a></li>
+                <li><a href="/#social">Connect</a></li>
+                <li><a href="/category/status-hubungan.html">Check Hubungan</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="qris-container">
+            <h1 class="qris-title">Scan QRIS Code</h1>
+            <p class="qris-subtitle">Support my work by scanning this QRIS code with your preferred payment app</p>
+            
+            <div class="qris-code">
+                <img src="https://media-hosting.imagekit.io//d1d743ea1c6d4cb2/518d5a50-9888-4253-9d18-3e963da9b8ea.jpeg?Expires=1832324705&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=CTKpb7jQHMoEf2LsfcrIzhNFfWYYSZf4JjJrE3ntXpvzB19u0EeYhmUGG0VgoqJrsWScsw9S6Sov8RUiUAiAwVQCkLcKVxp4AKKdtk8Z7OUOqrKM1DE0HLE79rFbobtJauI04UVEqt69230GpT1O84oEZvxfRydQfrsZkQjsScA8yJgKB8mofWV0IldeCXNpaY~ZkMiCXItHU9kJIt5x9RwOWZ984Aqyo6uXBLUjJHrBWY3eckje8lS~DYO4pgrw9xIDM40E4wxsiu8Zgt0~aGL9MbfrLjDieYB0nOqZwpySMTIegqETI-XzP7~UEK3Of0QntLORBPrSdp1s-7CDzA__" alt="QRIS Code" class="qris-image">
+            </div>
+            
+            <div class="qris-amount">Rp 20.000</div>
+            
+            <div class="qris-instructions">
+                <h3>How to pay:</h3>
+                <ol>
+                    <li>Open your mobile banking or e-wallet app (GoPay, OVO, DANA, LinkAja, etc.)</li>
+                    <li>Find the scan QR code option in your app</li>
+                    <li>Scan this QRIS code</li>
+                    <li>Enter the amount you wish to donate (or use the pre-set amount)</li>
+                    <li>Confirm your payment</li>
+                </ol>
+            </div>
+            
+            <div class="button-group">
+                <a href="#" id="doneButton" class="button primary-button">I've Completed Payment</a>
+                <a href="index.html" class="button secondary-button">Cancel</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="copyright">
+                © 2025 BrianOfficial. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Payment Success Modal -->
+    <div id="successModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="modal-title">Thank You for Your Support!</h3>
+            <p class="modal-message">Your payment has been received. Your support helps me continue creating digital solutions and improving my skills.</p>
+            <a href="index.html" class="modal-button">Return to Homepage</a>
+        </div>
+    </div>
+    
+    <script>
+        // Function to open success modal
+        document.getElementById('doneButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('successModal').classList.add('active');
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('successModal');
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
