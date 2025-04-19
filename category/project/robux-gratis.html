@@ -1807,7 +1807,385 @@ body.dark-mode footer {
                     <p class="feature-description">Your account safety is our priority. We never ask for your password or sensitive information.</p>
                 </div>
                 
-                <!-- More features can be added here -->
+                <!-- Feature 3 -->
+<div class="feature-card fade-in" data-delay="0.3s">
+    <div class="feature-icon">
+        <i class="fas fa-percent"></i>
+    </div>
+    <h3 class="feature-title">Best Rates</h3>
+    <p class="feature-description">We offer the most competitive prices in the market with bonus Robux on selected packages.</p>
+</div>
+
+<!-- Feature 4 -->
+<div class="feature-card fade-in" data-delay="0.4s">
+    <div class="feature-icon">
+        <i class="fas fa-headset"></i>
+    </div>
+    <h3 class="feature-title">24/7 Support</h3>
+    <p class="feature-description">Our customer support team is available 24/7 to assist you with any questions or concerns.</p>
+</div>
+
+<!-- Feature 5 -->
+<div class="feature-card fade-in" data-delay="0.5s">
+    <div class="feature-icon">
+        <i class="fas fa-credit-card"></i>
+    </div>
+    <h3 class="feature-title">Secure Payment</h3>
+    <p class="feature-description">Multiple secure payment methods available with encrypted transactions for your safety.</p>
+</div>
+
+<!-- Feature 6 -->
+<div class="feature-card fade-in" data-delay="0.6s">
+    <div class="feature-icon">
+        <i class="fas fa-thumbs-up"></i>
+    </div>
+    <h3 class="feature-title">Satisfaction Guaranteed</h3>
+    <p class="feature-description">With thousands of satisfied customers, we guarantee quality service or your money back.</p>
+</div>
+</div>
+</section>
+
+<!-- Testimonial Section -->
+<section id="testimonials" class="testimonial-section">
+<div class="container">
+    <div class="section-header">
+        <span class="section-subtitle">Happy Customers</span>
+        <h2 class="section-title">What Our Customers Say</h2>
+        <p class="section-description">Don't just take our word for it. Here's what our customers have to say about our service.</p>
+    </div>
+    
+    <div class="testimonials-container">
+        <div class="testimonial-card fade-in" data-delay="0.1s">
+            <div class="testimonial-avatar">
+                <img src="/api/placeholder/80/80" alt="Customer Avatar">
+            </div>
+            <div class="testimonial-rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">"I was skeptical at first, but RobuxZone delivered the Robux to my account within minutes! The prices are great and the service is amazing. Highly recommended!"</p>
+            <h4 class="testimonial-author">Alex Johnson</h4>
+            <div class="testimonial-role">Roblox Player</div>
+        </div>
+        
+        <!-- Add more testimonials here -->
+        <div class="testimonial-card fade-in" data-delay="0.2s">
+            <div class="testimonial-avatar">
+                <img src="/api/placeholder/80/80" alt="Customer Avatar">
+            </div>
+            <div class="testimonial-rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">"Best Robux provider I've found so far! Super fast delivery and excellent customer service. I had a question and they responded within minutes."</p>
+            <h4 class="testimonial-author">Sarah Miller</h4>
+            <div class="testimonial-role">Roblox Developer</div>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- Order Form Section -->
+<section id="order" class="order-section">
+<div class="container">
+    <div class="section-header">
+        <span class="section-subtitle">Get Started</span>
+        <h2 class="section-title">Order Your Robux Now</h2>
+        <p class="section-description">Fill in the form below to place your order and get your Robux instantly.</p>
+    </div>
+    
+    <div class="order-container">
+        <div class="order-content fade-in" data-delay="0.1s">
+            <div class="section-title">Ready to Power Up Your Roblox Experience?</div>
+            <p class="section-description">Our secure ordering system ensures a smooth and safe transaction. Once your payment is confirmed, your Robux will be delivered instantly to your account.</p>
+            <ul class="package-features" style="margin-top: 30px;">
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    No password required
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    Instant delivery after payment
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    100% secure transaction
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    24/7 customer support
+                </li>
+            </ul>
+        </div>
+        
+        <form class="order-form fade-in" data-delay="0.2s">
+            <h3 class="form-title">Place Your Order</h3>
+            
+            <div class="form-group">
+                <label for="username" class="form-label">Roblox Username</label>
+                <input type="text" id="username" class="form-control" placeholder="Enter your Roblox username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" class="form-control" placeholder="Enter your email address" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="package" class="form-label">Select Package</label>
+                <select id="package" class="form-control form-select" required>
+                    <option value="" selected disabled>Choose a package</option>
+                    <option value="starter">Starter Pack - 400 Robux ($4.99)</option>
+                    <option value="value">Value Pack - 1,000 Robux ($9.99)</option>
+                    <option value="premium">Premium Pack - 2,200 Robux ($19.99)</option>
+                    <option value="ultimate">Ultimate Pack - 6,000 Robux ($49.99)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="payment" class="form-label">Payment Method</label>
+                <select id="payment" class="form-control form-select" required>
+                    <option value="" selected disabled>Select payment method</option>
+                    <option value="credit">Credit/Debit Card</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="crypto">Cryptocurrency</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-lg form-submit">
+                <i class="fas fa-shopping-cart"></i>
+                Complete Order
+            </button>
+        </form>
+    </div>
+</div>
+</section>
+
+<!-- FAQ Section -->
+<section id="faq" class="faq-section">
+<div class="container">
+    <div class="section-header">
+        <span class="section-subtitle">Common Questions</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-description">Find answers to the most common questions about our service.</p>
+    </div>
+    
+    <div class="faq-container">
+        <!-- FAQ Item 1 -->
+        <div class="faq-item fade-in" data-delay="0.1s">
+            <div class="faq-question">Is this service safe and legitimate?</div>
+            <div class="faq-answer">Yes, our service is 100% safe and legitimate. We don't require your password or any sensitive information. We only need your public Roblox username to send the Robux. We've served thousands of satisfied customers without any issues.</div>
+        </div>
+        
+        <!-- FAQ Item 2 -->
+        <div class="faq-item fade-in" data-delay="0.2s">
+            <div class="faq-question">How long does it take to receive my Robux?</div>
+            <div class="faq-answer">Your Robux will be delivered instantly after your payment is confirmed. In some rare cases, it might take up to 5 minutes depending on the server load and payment method used.</div>
+        </div>
+        
+        <!-- FAQ Item 3 -->
+        <div class="faq-item fade-in" data-delay="0.3s">
+            <div class="faq-question">What payment methods do you accept?</div>
+            <div class="faq-answer">We accept a variety of payment methods including credit/debit cards, PayPal, and cryptocurrencies to provide you with maximum flexibility.</div>
+        </div>
+        
+        <!-- FAQ Item 4 -->
+        <div class="faq-item fade-in" data-delay="0.4s">
+            <div class="faq-question">What if I don't receive my Robux after payment?</div>
+            <div class="faq-answer">If you don't receive your Robux within 10 minutes after payment confirmation, please contact our customer support team immediately. We'll resolve the issue or provide a full refund.</div>
+        </div>
+        
+        <!-- FAQ Item 5 -->
+        <div class="faq-item fade-in" data-delay="0.5s">
+            <div class="faq-question">Can I get banned for using this service?</div>
+            <div class="faq-answer">No, our method is compliant with Roblox's terms of service. We use legitimate group funds transfer methods to send Robux to your account, which is completely safe and authorized.</div>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer>
+<div class="footer-shape"></div>
+<div class="container">
+    <div class="footer-grid">
+        <!-- Company Info -->
+        <div class="footer-column">
+            <h3>RobuxZone</h3>
+            <p class="footer-contact-text">The #1 premium Robux top-up service trusted by thousands of Roblox players worldwide.</p>
+            <div class="footer-social">
+                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-discord"></i></a>
             </div>
         </div>
-    </section>
+        
+        <!-- Quick Links -->
+        <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+                <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
+                <li><a href="#packages"><i class="fas fa-chevron-right"></i> Packages</a></li>
+                <li><a href="#how-it-works"><i class="fas fa-chevron-right"></i> How It Works</a></li>
+                <li><a href="#features"><i class="fas fa-chevron-right"></i> Features</a></li>
+                <li><a href="#testimonials"><i class="fas fa-chevron-right"></i> Testimonials</a></li>
+            </ul>
+        </div>
+        
+        <!-- Support -->
+        <div class="footer-column">
+            <h3>Support</h3>
+            <ul class="footer-links">
+                <li><a href="#faq"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right"></i> Refund Policy</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
+            </ul>
+        </div>
+        
+        <!-- Contact -->
+        <div class="footer-column">
+            <h3>Contact Us</h3>
+            <div class="footer-contact-item">
+                <i class="fas fa-envelope"></i>
+                <div class="footer-contact-text">support@robuxzone.com</div>
+            </div>
+            <div class="footer-contact-item">
+                <i class="fas fa-clock"></i>
+                <div class="footer-contact-text">24/7 Customer Support</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p class="copyright">© 2025 RobuxZone. All rights reserved. Not affiliated with Roblox Corporation.</p>
+    </div>
+</div>
+</footer>
+
+<!-- Back to Top Button -->
+<div class="back-to-top">
+<i class="fas fa-chevron-up"></i>
+</div>
+
+<!-- Dark Mode Toggle -->
+<div class="dark-mode-toggle">
+<i class="fas fa-moon"></i>
+</div>
+
+<!-- JavaScript -->
+<script>
+// Menu Toggle
+const menuToggle = document.querySelector('.menu-toggle');
+const nav = document.querySelector('nav');
+
+menuToggle.addEventListener('click', () => {
+    nav.classList.toggle('active');
+});
+
+// FAQ Accordion
+const faqItems = document.querySelectorAll('.faq-item');
+
+faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    
+    question.addEventListener('click', () => {
+        item.classList.toggle('active');
+    });
+});
+
+// Back to Top Button
+const backToTopBtn = document.querySelector('.back-to-top');
+
+window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+        backToTopBtn.classList.add('active');
+    } else {
+        backToTopBtn.classList.remove('active');
+    }
+});
+
+backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+
+// Dark Mode Toggle
+const darkModeToggle = document.querySelector('.dark-mode-toggle');
+const body = document.body;
+
+darkModeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    
+    if (body.classList.contains('dark-mode')) {
+        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+        darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    }
+});
+
+// Animations on Scroll
+const fadeElems = document.querySelectorAll('.fade-in');
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const elem = entry.target;
+            const delay = elem.getAttribute('data-delay') || 0;
+            
+            setTimeout(() => {
+                elem.style.opacity = 1;
+                elem.style.transform = 'translateY(0)';
+            }, delay * 1000);
+            
+            observer.unobserve(elem);
+        }
+    });
+}, {
+    threshold: 0.1
+});
+
+fadeElems.forEach(elem => {
+    elem.style.opacity = 0;
+    elem.style.transform = 'translateY(20px)';
+    elem.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(elem);
+});
+
+// Form Validation
+const orderForm = document.querySelector('.order-form');
+
+if (orderForm) {
+    orderForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Simple validation
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const package = document.getElementById('package').value;
+        const payment = document.getElementById('payment').value;
+        
+        if (!username || !email || !package || !payment) {
+            alert('Please fill in all required fields');
+            return;
+        }
+        
+        // Here you would normally send the form data to your server
+        // For this example, we'll just show a success message
+        alert('Order submitted successfully! Your Robux will be delivered shortly.');
+        orderForm.reset();
+    });
+}
+</script>
+</body>
+</html>
