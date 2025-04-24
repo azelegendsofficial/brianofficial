@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brian Official | Server Simulator</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #0ea5e9;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --console-bg: #1e1e2e;
+            --console-text: #a6e3a1;
+            --console-prompt: #f38ba8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f9fafb 0%, #e0e7ff 100%);
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-body {
+            padding: 1.75rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background-color: white;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            gap: 0.5rem;
+        }
+        
+        .btn svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn:disabled {
+            background: var(--gray-light);
+            color: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .console-container {
+            position: relative;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .console-header {
+            background-color: #2a2a3e;
+            color: white;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .console-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .console-circle {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .circle-red {
+            background-color: #ff5f56;
+        }
+        
+        .circle-yellow {
+            background-color: #ffbd2e;
+        }
+        
+        .circle-green {
+            background-color: #27c93f;
+        }
+        
+        .console {
+            background-color: var(--console-bg);
+            color: var(--console-text);
+            font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+            padding: 1.25rem;
+            border-radius: 0 0 0.75rem 0.75rem;
+            height: 450px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .console-blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+        
+        .console-input {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        
+        .console-prompt {
+            margin-right: 0.5rem;
+            color: var(--console-prompt);
+            font-weight: bold;
+        }
+        
+        #userInput {
+            background-color: transparent;
+            border: none;
+            color: white;
+            flex-grow: 1;
+            padding: 0;
+            font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 0.95rem;
+        }
+        
+        #userInput:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        
+        .resource-controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .slider-container {
+            width: 100%;
+        }
+        
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .slider-value {
+            font-weight: 600;
+            color: var(--primary);
+            background-color: var(--primary-light);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 8px;
+            background: var(--gray-light);
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        
+        .control-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--gray);
+        }
+        
+        .status-online {
+            background-color: var(--success);
+            box-shadow: 0 0 5px var(--success);
+        }
+        
+        .status-offline {
+            background-color: var(--danger);
+        }
+        
+        .resource-status {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            border: 1px solid var(--gray-light);
+        }
+        
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+        
+        .resource-icon {
+            color: var(--primary);
+        }
+        
+        .resource-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .software-logo {
+            width: 28px;
+            height: 28px;
+            margin-right: 0.75rem;
+        }
+        
+        .software-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .software-option:hover {
+            border-color: var(--primary);
+            background-color: rgba(99, 102, 241, 0.05);
+        }
+        
+        .software-option.selected {
+            border-color: var(--primary);
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+        
+        .software-info {
+            flex-grow: 1;
+        }
+        
+        .software-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .software-desc {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+        
+        .typed-text {
+            display: inline;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+        
+        .loading-bar {
+            height: 6px;
+            background-color: #2a2a3e;
+            border-radius: 3px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            width: 0;
+            transition: width 0.3s ease;
+        }
+        
+        /* Dark theme toggle */
+        .theme-switch {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 2rem;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 10;
+        }
+        
+        .primary-light {
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+        
+        /* Software selection grid */
+        .software-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .software-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .software-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .resource-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Brian Official Server Simulator</h1>
+        <p class="subtitle">Simulate and test server installations with various operating systems</p>
+        
+        <!-- Selection Screen -->
+        <div id="selection-screen" class="card fade-in">
+            <div class="card-header">
+                <span>Select Server Configuration</span>
+            </div>
+            <div class="card-body">
+                <label>Choose Operating System:</label>
+                <div class="software-grid">
+                    <div class="software-option" data-os="Windows Server 2022">
+                        <div class="software-info">
+                            <div class="software-name">Windows Server 2022</div>
+                            <div class="software-desc">Microsoft's latest server OS with enhanced security</div>
+                        </div>
+                    </div>
+                    
+                    <div class="software-option" data-os="Ubuntu 22.04 LTS">
+                        <div class="software-info">
+                            <div class="software-name">Ubuntu 22.04 LTS</div>
+                            <div class="software-desc">Long-term support version with 5 years of updates</div>
+                        </div>
+                    </div>
+                    
+                    <div class="software-option" data-os="Ubuntu Server 22.04">
+                        <div class="software-info">
+                            <div class="software-name">Ubuntu Server 22.04</div>
+                            <div class="software-desc">Optimized for server deployments and cloud</div>
+                        </div>
+                    </div>
+                    
+                    <div class="software-option" data-os="Arch Linux">
+                        <div class="software-info">
+                            <div class="software-name">Arch Linux</div>
+                            <div class="software-desc">Lightweight and flexible Linux distribution</div>
+                        </div>
+                    </div>
+                    
+                    <div class="software-option" data-os="CentOS 9 Stream">
+                        <div class="software-info">
+                            <div class="software-name">CentOS 9 Stream</div>
+                            <div class="software-desc">Continuous delivery distribution for enterprise use</div>
+                        </div>
+                    </div>
+                    
+                    <div class="software-option" data-os="Debian 12">
+                        <div class="software-info">
+                            <div class="software-name">Debian 12</div>
+                            <div class="software-desc">Stable and secure Linux distribution</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="resource-controls">
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="ram">RAM</label>
+                            <div class="slider-value primary-light"><span id="ram-value">8</span> GB</div>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="ram" min="1" max="64" value="8" step="1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="cpu">CPU Cores</label>
+                            <div class="slider-value primary-light"><span id="cpu-value">4</span> Cores</div>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="cpu" min="1" max="32" value="4" step="1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="storage">Storage</label>
+                            <div class="slider-value primary-light"><span id="storage-value">100</span> GB</div>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="storage" min="10" max="2000" value="100" step="10">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="network">Network Speed</label>
+                            <div class="slider-value primary-light"><span id="network-value">1000</span> Mbps</div>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="network" min="10" max="10000" value="1000" step="10">
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="install-btn" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m-6 3.75l3 3m0 0l3-3m-3 3V4.5" />
+                    </svg>
+                    Begin Installation
+                </button>
+            </div>
+        </div>
+        
+        <!-- Server Console Screen -->
+        <div id="server-console-screen" class="hidden fade-in">
+            <div class="card">
+                <div class="card-header">
+                    <div style="display: flex; align-items: center;">
+                        <span id="server-title"></span>
+                        <div class="server-status" style="margin-left: 1rem;">
+                            <div id="status-indicator" class="status-indicator status-offline"></div>
+                            <span id="status-text">Offline</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="resource-status">
+                        <div class="resource-item">
+                            <svg class="resource-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                                <line x1="12" y1="14" x2="12" y2="14"></line>
+                                <line x1="12" y1="6" x2="12" y2="10"></line>
+                            </svg>
+                            <span id="ram-display" class="resource-value">RAM: 8 GB</span>
+                        </div>
+                        <div class="resource-item">
+                            <svg class="resource-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 20V10M12 20V4M6 20v-6"></path>
+                            </svg>
+                            <span id="cpu-display" class="resource-value">CPU: 4 Cores</span>
+                        </div>
+                        <div class="resource-item">
+                            <svg class="resource-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            </svg>
+                            <span id="storage-display" class="resource-value">Storage: 100 GB</span>
+                        </div>
+                        <div class="resource-item">
+                            <svg class="resource-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 9l6 6 6-6"></path>
+                            </svg>
+                            <span id="network-display" class="resource-value">Network: 1000 Mbps</span>
+                        </div>
+                    </div>
+                
+                    <div class="console-container">
+                        <div class="console-header">
+                            <div class="console-controls">
+                                <div class="console-circle circle-red"></div>
+                                <div class="console-circle circle-yellow"></div>
+                                <div class="console-circle circle-green"></div>
+                            </div>
+                            <div id="console-title">Terminal</div>
+                        </div>
+                        <div class="console" id="server-console"></div>
+                        <div class="console-input hidden">
+                            <span class="console-prompt" id="prompt-text">user@server:~$</span>
+                            <input type="text" id="userInput" autocomplete="off">
+                            <span class="console-blink">▋</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-buttons">
+                        <button id="start-btn" class="btn btn-success">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Start
+                        </button>
+                        <button id="restart-btn" class="btn btn-warning" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 2v6h6"></path>
+                                <path d="M21 12A9 9 0 0 0 6 5.3L3 8"></path>
+                                <path d="M21 22v-6h-6"></path>
+                                <path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"></path>
+                            </svg>
+                            Restart
+                        </button>
+                        <button id="stop-btn" class="btn btn-danger" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect>
+                            </svg>
+                            Stop
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Elements
+        const selectionScreen = document.getElementById('selection-screen');
+        const serverConsoleScreen = document.getElementById('server-console-screen');
+        const serverConsole = document.getElementById('server-console');
+        const consoleInput = document.querySelector('.console-input');
+        const promptText = document.getElementById('prompt-text');
+        const userInput = document.getElementById('userInput');
+        const statusIndicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+        
+        // Buttons
+        const installBtn = document.getElementById('install-btn');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        
+        // Resource controls
+        const ramSlider = document.getElementById('ram');
+        const cpuSlider = document.getElementById('cpu');
+        const storageSlider = document.getElementById('storage');
+        const networkSlider = document.getElementById('network');
+        const ramValue = document.getElementById('ram-value');
+        const cpuValue = document.getElementById('cpu-value');
+        const storageValue = document.getElementById('storage-value');
+        const networkValue = document.getElementById('network-value');
+        
+        // Software options
+        const softwareOptions = document.querySelectorAll('.software-option');
+        
+        // Global variables
+        let selectedSoftware = '';
+        let userName = '';
+        let fullName = '';
+        let password = '';
+        let isServerRunning = false;
+        let isTyping = false;
+        let userSetupCompleted = false;
+        let currentTypingSpeed = 30; // ms per character
+        
+        // Initialize sliders
+        ramSlider.addEventListener('input', () => {
+            ramValue.textContent = ramSlider.value;
+        });
+        
+        cpuSlider.addEventListener('input', () => {
+            cpuValue.textContent = cpuSlider.value;
+        });
+        
+        storageSlider.addEventListener('input', () => {
+            storageValue.textContent = storageSlider.value;
+        });
+        
+        networkSlider.addEventListener('input', () => {
+            networkValue.textContent = networkSlider.value;
+        });
+        
+        // Software selection
+        softwareOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                softwareOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                selectedSoftware = option.getAttribute('data-os');
+            });
+        });
+        
+        // Install button click
+        installBtn.addEventListener('click', () => {
+            if (!selectedSoftware) {
+                alert('Silakan pilih sistem operasi terlebih dahulu!');
+                return;
+            }
+            
+            // Hide selection screen, show server console screen
+            selectionScreen.classList.add('hidden');
+            serverConsoleScreen.classList.remove('hidden');
+            
+            // Update server title and resource displays
+            document.getElementById('server-title').textContent = selectedSoftware;
+            document.getElementById('console-title').textContent = `${selectedSoftware} Terminal`;
+            document.getElementById('ram-display').textContent = `RAM: ${ramSlider.value} GB`;
+            document.getElementById('cpu-display').textContent = `CPU: ${cpuSlider.value} Cores`;
+            document.getElementById('storage-display').textContent = `Storage: ${storageSlider.value} GB`;
+            document.getElementById('network-display').textContent = `Network: ${networkValue.textContent} Mbps`;
+            
+            // Start installation process
+            simulateInstallation();
+        });
+        
+        // Start button click (continuing implementation)
+startBtn.addEventListener('click', () => {
+    if (!isServerRunning) {
+        startServer();
+    }
+});
+
+// Restart button click
+restartBtn.addEventListener('click', () => {
+    if (isServerRunning) {
+        stopServer(true);
+        
+        // Wait a moment before restarting
+        setTimeout(() => {
+            startServer();
+        }, 1500);
+    }
+});
+
+// Stop button click
+stopBtn.addEventListener('click', () => {
+    if (isServerRunning) {
+        stopServer(false);
+    }
+});
+
+// User input processing
+userInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !isTyping) {
+        const command = userInput.value.trim();
+        userInput.value = '';
+        
+        if (command) {
+            // Show command in console
+            typeText(`${promptText.textContent} ${command}\n`, 1);
+            
+            // Process command
+            processCommand(command);
+        }
+    }
+});
+
+// Simulate installation of the selected OS
+function simulateInstallation() {
+    let installationSteps = [];
+    
+    if (selectedSoftware.includes('Windows')) {
+        installationSteps = [
+            'Starting Windows Server installation...',
+            'Loading installation files...',
+            'Setting up Windows environment...',
+            'Configuring system components...',
+            'Installing base system...',
+            'Setting up storage configurations...',
+            'Configuring network settings...',
+            'Installing Windows features...',
+            'Applying security settings...',
+            'Finalizing installation...',
+            'Installation completed.',
+            'Press Start button to boot the server.'
+        ];
+    } else {
+        // Linux-based installation
+        installationSteps = [
+            `Starting ${selectedSoftware} installation...`,
+            'Loading installation files...',
+            'Checking system requirements...',
+            'Partitioning disk space...',
+            'Extracting base system...',
+            'Installing core packages...',
+            'Configuring system settings...',
+            'Setting up package manager...',
+            'Configuring network...',
+            'Setting up bootloader...',
+            'Installation completed.',
+            'Press Start button to boot the server.'
+        ];
+    }
+    
+    // Clear the console first
+    serverConsole.textContent = '';
+    
+    // Create and display a loading bar
+    const loadingBar = document.createElement('div');
+    loadingBar.className = 'loading-bar';
+    const loadingProgress = document.createElement('div');
+    loadingProgress.className = 'loading-progress';
+    loadingBar.appendChild(loadingProgress);
+    serverConsole.appendChild(loadingBar);
+    
+    // Type each step with appropriate delays
+    let stepDelay = 1000;
+    installationSteps.forEach((step, index) => {
+        setTimeout(() => {
+            // Update loading bar progress
+            const progress = ((index + 1) / installationSteps.length) * 100;
+            loadingProgress.style.width = `${progress}%`;
+            
+            // Add the step text
+            typeText(step + '\n', 20);
+        }, stepDelay);
+        
+        stepDelay += 1500 + Math.random() * 500;
+    });
+}
+
+// Start the server
+function startServer() {
+    isServerRunning = true;
+    
+    // Update UI
+    startBtn.disabled = true;
+    restartBtn.disabled = false;
+    stopBtn.disabled = false;
+    statusIndicator.classList.remove('status-offline');
+    statusIndicator.classList.add('status-online');
+    statusText.textContent = 'Online';
+    
+    // Clear console
+    serverConsole.textContent = '';
+    
+    // Boot sequence
+    const bootSequence = [];
+    
+    if (selectedSoftware.includes('Windows')) {
+        bootSequence.push(
+            'Starting Windows Server...',
+            'Initializing system components...',
+            'Loading kernel...',
+            'Starting system services...',
+            'Checking disk integrity...',
+            'Configuring network interfaces...',
+            'Starting Windows Server Core...',
+            'Loading user interface...',
+            'Server is now running.',
+            'Initializing command prompt...'
+        );
+        
+        promptText.textContent = 'C:\\>';
+    } else {
+        // Linux boot sequence
+        bootSequence.push(
+            `Booting ${selectedSoftware}...`,
+            '[ OK ] Started system initialization.',
+            '[ OK ] Started kernel services.',
+            '[ OK ] Started disk mounts.',
+            '[ OK ] Started network services.',
+            '[ OK ] Started system logging service.',
+            '[ OK ] Started system monitoring.',
+            '[ OK ] Reached target graphical interface.',
+            `${selectedSoftware} initialized and running.`
+        );
+        
+        // Determine prompt based on distribution
+        if (selectedSoftware.includes('Ubuntu')) {
+            promptText.textContent = 'ubuntu@server:~$';
+        } else if (selectedSoftware.includes('CentOS')) {
+            promptText.textContent = 'centos@server:~$';
+        } else if (selectedSoftware.includes('Debian')) {
+            promptText.textContent = 'debian@server:~$';
+        } else if (selectedSoftware.includes('Arch')) {
+            promptText.textContent = 'arch@server:~$';
+        } else {
+            promptText.textContent = 'user@server:~$';
+        }
+    }
+    
+    // Type boot sequence with delays
+    let delay = 0;
+    bootSequence.forEach((line) => {
+        setTimeout(() => {
+            typeText(line + '\n', 20);
+            
+            // Show command input after boot completes
+            if (line === bootSequence[bootSequence.length - 1]) {
+                setTimeout(() => {
+                    consoleInput.classList.remove('hidden');
+                    userInput.focus();
+                }, 500);
+            }
+        }, delay);
+        
+        delay += 500 + Math.random() * 300;
+    });
+}
+
+// Stop the server
+function stopServer(isRestarting) {
+    isServerRunning = false;
+    
+    // Update UI
+    startBtn.disabled = false;
+    restartBtn.disabled = true;
+    stopBtn.disabled = true;
+    statusIndicator.classList.remove('status-online');
+    statusIndicator.classList.add('status-offline');
+    statusText.textContent = 'Offline';
+    
+    // Hide command input
+    consoleInput.classList.add('hidden');
+    
+    // Show shutdown messages
+    const shutdownSequence = [];
+    
+    if (selectedSoftware.includes('Windows')) {
+        shutdownSequence.push(
+            'Shutting down services...',
+            'Stopping system processes...',
+            'Saving system state...',
+            'Shutting down Windows Server...',
+            isRestarting ? 'Server will restart shortly.' : 'Server is now offline.'
+        );
+    } else {
+        // Linux shutdown sequence
+        shutdownSequence.push(
+            'Initiating shutdown procedure...',
+            '[ OK ] Stopped system services.',
+            '[ OK ] Stopped network services.',
+            '[ OK ] Stopped logging service.',
+            '[ OK ] Unmounting file systems.',
+            '[ OK ] Deactivating swap.',
+            isRestarting ? 'Server will restart shortly.' : 'Server is now offline.'
+        );
+    }
+    
+    // Type shutdown sequence with delays
+    let delay = 0;
+    shutdownSequence.forEach((line) => {
+        setTimeout(() => {
+            typeText(line + '\n', 20);
+        }, delay);
+        
+        delay += 500 + Math.random() * 300;
+    });
+}
+
+// Process user commands
+function processCommand(command) {
+    const cmd = command.toLowerCase();
+    
+    // Basic commands
+    if (cmd === 'help' || cmd === 'commands') {
+        showHelp();
+    } else if (cmd === 'clear' || cmd === 'cls') {
+        serverConsole.textContent = '';
+        return;
+    } else if (cmd === 'status' || cmd === 'info') {
+        showServerStatus();
+    } else if (cmd === 'exit') {
+        typeText('Use the Stop button to shut down the server.\n', 20);
+    } else if (cmd.startsWith('echo ')) {
+        typeText(command.substring(5) + '\n', 20);
+    } else if (cmd === 'ls' || cmd === 'dir') {
+        listDirectory();
+    } else if (cmd.startsWith('mkdir ')) {
+        createDirectory(command.substring(6));
+    } else if (cmd === 'date' || cmd === 'time') {
+        showDateTime();
+    } else if (cmd === 'whoami' || cmd === 'hostname') {
+        showHostInfo();
+    } else if (cmd.startsWith('ping ')) {
+        simulatePing(command.substring(5));
+    } else if (cmd === 'restart') {
+        typeText('Use the Restart button to restart the server.\n', 20);
+    } else if (cmd === 'version') {
+        showVersion();
+    } else {
+        // Command not recognized
+        if (selectedSoftware.includes('Windows')) {
+            typeText(`'${command}' is not recognized as an internal or external command, operable program or batch file.\n`, 20);
+        } else {
+            typeText(`command not found: ${command}\n`, 20);
+        }
+    }
+}
+
+// Typing effect for console output
+function typeText(text, speed) {
+    isTyping = true;
+    
+    const characters = text.split('');
+    let i = 0;
+    
+    function type() {
+        if (i < characters.length) {
+            serverConsole.textContent += characters[i];
+            serverConsole.scrollTop = serverConsole.scrollHeight;
+            i++;
+            setTimeout(type, speed);
+        } else {
+            isTyping = false;
+        }
+    }
+    
+    type();
+}
+
+// Show help command
+function showHelp() {
+    const helpText = selectedSoftware.includes('Windows') ? 
+        `Available commands:
+help       - Display this help message
+cls        - Clear the console screen
+status     - Show server status information
+dir        - List directory contents
+mkdir      - Create a new directory
+echo       - Display a message
+date       - Show current date and time
+whoami     - Display current user
+ping       - Ping a host
+version    - Display server version
+exit       - Exit the command prompt
+` : 
+        `Available commands:
+help       - Display this help message
+clear      - Clear the console screen
+status     - Show server status information
+ls         - List directory contents
+mkdir      - Create a new directory
+echo       - Display a message
+date       - Show current date and time
+whoami     - Display current username and hostname
+ping       - Ping a host
+version    - Display server version
+`;
+    
+    typeText(helpText, 5);
+}
+
+// Show server status
+function showServerStatus() {
+    const uptime = Math.floor(Math.random() * 24) + "h " + Math.floor(Math.random() * 60) + "m";
+    const memory = Math.floor(Math.random() * 30) + 70;
+    const cpu = Math.floor(Math.random() * 40) + 10;
+    
+    const statusText = `Server Status:
+- Running: ${selectedSoftware}
+- Status: Online
+- Uptime: ${uptime}
+- CPU Usage: ${cpu}%
+- Memory Usage: ${memory}%
+- Network: Connected
+`;
+    
+    typeText(statusText, 20);
+}
+
+// Simulate directory listing
+function listDirectory() {
+    let listing = '';
+    
+    if (selectedSoftware.includes('Windows')) {
+        listing = `
+ Directory of C:\\
+ 
+04/24/2025  08:30 AM    <DIR>          Program Files
+04/24/2025  08:30 AM    <DIR>          Program Files (x86)
+04/24/2025  08:30 AM    <DIR>          Users
+04/24/2025  08:30 AM    <DIR>          Windows
+04/24/2025  08:45 AM             2,048 server.config
+04/24/2025  08:45 AM             4,096 system.log
+               2 File(s)          6,144 bytes
+               4 Dir(s)  51,024,564,224 bytes free
+`;
+    } else {
+        listing = `
+drwxr-xr-x  2 root root 4096 Apr 24 08:30 bin
+drwxr-xr-x  2 root root 4096 Apr 24 08:30 boot
+drwxr-xr-x  2 root root 4096 Apr 24 08:30 dev
+drwxr-xr-x  2 root root 4096 Apr 24 08:30 etc
+drwxr-xr-x  2 root root 4096 Apr 24 08:30 home
+drwxr-xr-x  2 root root 4096 Apr 24 08:30 lib
+drwxr-xr-x  2 root root 4096 Apr 24 08:30 opt
+drwxr-xr-x  2 root root 4096 Apr 24 08:30 var
+-rw-r--r--  1 root root 2048 Apr 24 08:45 server.config
+-rw-r--r--  1 root root 4096 Apr 24 08:45 system.log
+`;
+    }
+    
+    typeText(listing, 5);
+}
+
+// Create directory simulation
+function createDirectory(dirName) {
+    if (!dirName.trim()) {
+        if (selectedSoftware.includes('Windows')) {
+            typeText("The syntax of the command is incorrect.\n", 20);
+        } else {
+            typeText("mkdir: missing operand\n", 20);
+        }
+        return;
+    }
+    
+    typeText(`Directory '${dirName}' created successfully.\n`, 20);
+}
+
+// Show date and time
+function showDateTime() {
+    const now = new Date();
+    const dateString = now.toLocaleString();
+    
+    typeText(dateString + '\n', 20);
+}
+
+// Show host info
+function showHostInfo() {
+    const hostname = selectedSoftware.includes('Windows') ? 
+        "Administrator" : 
+        `${selectedSoftware.toLowerCase().replace(' ', '')}@server`;
+        
+    typeText(hostname + '\n', 20);
+}
+
+// Simulate ping
+function simulatePing(host) {
+    if (!host.trim()) {
+        typeText("Please specify a host to ping.\n", 20);
+        return;
+    }
+    
+    typeText(`Pinging ${host} with 32 bytes of data:\n`, 20);
+    
+    let pingCount = 4;
+    let delay = 500;
+    
+    for (let i = 0; i < pingCount; i++) {
+        setTimeout(() => {
+            const time = Math.floor(Math.random() * 30) + 20;
+            typeText(`Reply from ${host}: bytes=32 time=${time}ms TTL=128\n`, 20);
+            
+            if (i === pingCount - 1) {
+                const avgTime = Math.floor(Math.random() * 30) + 20;
+                typeText(`\nPing statistics for ${host}:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = ${avgTime - 5}ms, Maximum = ${avgTime + 10}ms, Average = ${avgTime}ms\n`, 20);
+            }
+        }, delay);
+        
+        delay += 800;
+    }
+}
+
+// Show version information
+function showVersion() {
+    let versionInfo = '';
+    
+    if (selectedSoftware.includes('Windows')) {
+        versionInfo = "Microsoft Windows Server 2022 [Version 10.0.20348.768]\n";
+    } else if (selectedSoftware.includes('Ubuntu')) {
+        versionInfo = "Ubuntu 22.04.3 LTS (Jammy Jellyfish)\n";
+    } else if (selectedSoftware.includes('CentOS')) {
+        versionInfo = "CentOS Linux 9.0.2211 (Stream)\n";
+    } else if (selectedSoftware.includes('Debian')) {
+        versionInfo = "Debian GNU/Linux 12 (Bookworm)\n";
+    } else if (selectedSoftware.includes('Arch')) {
+        versionInfo = "Arch Linux (Rolling Release - April 2025)\n";
+    }
+    
+    typeText(versionInfo, 20);
+}
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', () => {
+    // Populate OS selection dropdown
+    const operatingSystems = [
+        'Windows Server 2022',
+        'Ubuntu Server 22.04 LTS',
+        'CentOS Stream 9',
+        'Debian 12',
+        'Arch Linux'
+    ];
+    
+    operatingSystems.forEach(os => {
+        const option = document.createElement('option');
+        option.value = os;
+        option.textContent = os;
+        osSelect.appendChild(option);
+    });
+    
+    // Set default selected software
+    selectedSoftware = operatingSystems[0];
+    
+    // Add event listener for OS selection
+    osSelect.addEventListener('change', (e) => {
+        selectedSoftware = e.target.value;
+    });
+    
+    // Set up installation button
+    installBtn.addEventListener('click', () => {
+        if (!isServerRunning) {
+            simulateInstallation();
+        }
+    });
+    
+    // Initial UI setup
+    statusText.textContent = 'Not Installed';
+    statusIndicator.classList.add('status-offline');
+    consoleInput.classList.add('hidden');
+    startBtn.disabled = true;
+    restartBtn.disabled = true;
+    stopBtn.disabled = true;
+    
+    // Focus on OS select initially
+    osSelect.focus();
+});
+</script>
+</body>
+</html>
