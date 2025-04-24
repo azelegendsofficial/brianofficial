@@ -2335,6 +2335,75 @@
             </div>
         </div>
     </div>
+
+    <div id="notification-bar" style="
+    background-color: #ffecb3;
+    border-bottom: 2px solid #ffc107;
+    color: #856404;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; flex: 1;">
+            <i class="fas fa-exclamation-triangle" style="margin-right: 10px; font-size: 20px;"></i>
+            <span><strong>PERINGATAN!</strong> Hati-hati terhadap ripper yang menggunakan nama saya untuk menipu.</span>
+        </div>
+        <button id="see-more-btn" style="
+            background-color: #ffc107;
+            color: #856404;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        ">Lihat Selengkapnya</button>
+    </div>
+</div>
+
+<!-- Notification Modal -->
+<div id="notification-modal" class="modal-overlay" style="z-index: 2001;">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header" style="background-color: #ffecb3; color: #856404;">
+            <div class="modal-close" onclick="closeNotificationModal()">&times;</div>
+            <h3 style="padding: 10px 0; text-align: center;">⚠️ PERINGATAN TERHADAP RIPPER ⚠️</h3>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+            <p style="margin-bottom: 15px;">Saya ingin menginformasikan kepada semua pengunjung website bahwa telah ditemukan beberapa kasus penipuan menggunakan nama dan identitas saya (<strong>BrianOfficial</strong>).</p>
+            
+            <p style="margin-bottom: 15px;">Beberapa hal yang perlu Anda perhatikan:</p>
+            
+            <ul style="margin-bottom: 15px; padding-left: 20px;">
+                <li style="margin-bottom: 8px;">Saya <strong>HANYA</strong> menggunakan akun sosial media yang tercantum di website ini</li>
+                <li style="margin-bottom: 8px;">Saya <strong>TIDAK PERNAH</strong> meminta transfer uang muka atau deposit tanpa bukti jelas</li>
+                <li style="margin-bottom: 8px;">Selalu verifikasi identitas dengan menghubungi akun resmi saya sebelum melakukan transaksi</li>
+                <li style="margin-bottom: 8px;">Waspada terhadap penawaran yang terlalu murah atau menggiurkan</li>
+            </ul>
+            
+            <p style="margin-bottom: 15px;">Jika Anda menemui akun yang mencurigakan mengatasnamakan saya, mohon segera laporkan ke kontak resmi saya. Keamanan dan kepercayaan Anda adalah prioritas utama saya.</p>
+            
+            <button onclick="closeNotificationModal()" style="
+                width: 100%;
+                background-color: #ffc107;
+                color: #856404;
+                border: none;
+                border-radius: 4px;
+                padding: 10px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: background-color 0.3s;
+            ">Saya Mengerti</button>
+        </div>
+    </div>
+</div>
     
     <script>
         // Smooth scrolling for anchor links
@@ -2373,5 +2442,27 @@
             });
         });
     </script>
+    <script>
+    // Adjust navbar position due to notification bar
+    document.addEventListener('DOMContentLoaded', function() {
+        const notificationHeight = document.getElementById('notification-bar').offsetHeight;
+        const navbar = document.querySelector('.navbar');
+        const hero = document.querySelector('.hero');
+        
+        navbar.style.top = notificationHeight + 'px';
+        hero.style.paddingTop = (notificationHeight + 60) + 'px';
+    });
+    
+    // Notification modal functions
+    document.getElementById('see-more-btn').addEventListener('click', function() {
+        document.getElementById('notification-modal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+    
+    function closeNotificationModal() {
+        document.getElementById('notification-modal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+</script>
 </body>
 </html>
