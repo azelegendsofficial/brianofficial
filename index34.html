@@ -2409,20 +2409,15 @@
         });
     </script>
    <script>
-        // Show notification modal when button is clicked
-        document.getElementById('check-status-btn').addEventListener('click', function(e) {
-            // Prevent default only if you want to show the modal instead of going to the URL
-            // e.preventDefault();
-            document.getElementById('notification-modal').style.display = 'flex';
-            
-            // If you want the button to both show the modal AND go to the URL,
-            // you'd need to use a different approach
-        });
+    // Adjust navbar position due to notification bar
+    document.addEventListener('DOMContentLoaded', function() {
+        const notificationHeight = document.getElementById('notification-bar').offsetHeight;
+        const navbar = document.querySelector('.navbar');
+        const hero = document.querySelector('.hero');
         
-        // Close notification modal
-        function closeNotificationModal() {
-            document.getElementById('notification-modal').style.display = 'none';
-        }
-    </script>
+        navbar.style.top = notificationHeight + 'px';
+        hero.style.paddingTop = (notificationHeight + 60) + 'px';
+    });
+   </script>
 </body>
 </html>
