@@ -2338,43 +2338,124 @@
 
     <!-- Add this code right after the opening <body> tag -->
 
-<!-- Notification Bar - positioned right at the top -->
+<!-- Notification Bar -->
     <div id="notification-bar" style="
         background-color: #4ade80;
-        color: white;
-        text-align: center;
+        border-bottom: 2px solid #22c55e;
+        color: #155724;
         padding: 10px 0;
-        position: relative; /* Changed from fixed to relative */
+        position: relative;
         width: 100%;
-        z-index: 1000;
+        z-index: 2000;
         display: flex;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     ">
-        <div style="display: flex; justify-content: space-between; align-items: center; width: 90%; max-width: 1200px;">
-            <div style="display: flex; align-items: center; flex: 1; justify-content: center;">
-                <i class="fas fa-check-circle" style="margin-right: 10px;"></i>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 90%; max-width: 1200px;">
+            <div style="display: flex; align-items: center; flex: 1;">
+                <i class="fas fa-check-circle" style="margin-right: 10px; font-size: 20px; color: #155724;"></i>
                 <span><strong>INFORMASI!</strong> Website telah kembali online dan dapat diakses seperti biasa.</span>
             </div>
-            <button id="check-ping-btn" style="
-                background-color: white;
-                color: #16a34a;
+            <a href="https://status.mywebsite.com" id="check-status-btn" style="
+                background-color: #22c55e;
+                color: white;
                 border: none;
-                border-radius: 50px;
-                padding: 8px 18px;
+                border-radius: 4px;
+                padding: 5px 15px;
                 cursor: pointer;
                 font-weight: 600;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                display: flex;
-                align-items: center;
-                gap: 5px;
-            ">
-                <i class="fas fa-wifi"></i> Cek Ping Website
-            </button>
+                transition: background-color 0.3s;
+                text-decoration: none;
+                display: inline-block;
+            ">Cek Ping Website</a>
         </div>
     </div>
 
+    <!-- Notification Modal -->
+    <div id="notification-modal" class="modal-overlay" style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2001;
+        justify-content: center;
+        align-items: center;
+    ">
+        <div class="modal-content" style="
+            background-color: white;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 90%;
+        ">
+            <div class="modal-header" style="
+                background-color: #4ade80;
+                color: #155724;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                position: relative;
+            ">
+                <div class="modal-close" onclick="closeNotificationModal()" style="
+                    position: absolute;
+                    right: 15px;
+                    top: 10px;
+                    font-size: 24px;
+                    cursor: pointer;
+                ">&times;</div>
+                <h3 style="padding: 10px 0; text-align: center; margin: 0;">✓ Status Server Website</h3>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <p style="margin-bottom: 15px;">Status server website saat ini:</p>
+                
+                <div id="server-status" style="
+                    background-color: #f8f9fa;
+                    border: 1px solid #e9ecef;
+                    border-radius: 6px;
+                    padding: 15px;
+                    margin: 15px 0;
+                ">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #e9ecef;">
+                        <span>Server Utama</span>
+                        <span style="color: #22c55e;">Online <i class="fas fa-check-circle"></i></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #e9ecef;">
+                        <span>Database Server</span>
+                        <span style="color: #22c55e;">Online <i class="fas fa-check-circle"></i></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #e9ecef;">
+                        <span>API Gateway</span>
+                        <span style="color: #22c55e;">Online <i class="fas fa-check-circle"></i></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>CDN Server</span>
+                        <span style="color: #22c55e;">Online <i class="fas fa-check-circle"></i></span>
+                    </div>
+                </div>
+                
+                <p style="margin-bottom: 15px;">Semua layanan telah kembali berfungsi dengan normal. Jika Anda masih mengalami masalah, silakan refresh browser Anda atau hapus cache.</p>
+                
+                <a href="https://status.mywebsite.com/details" style="
+                    display: block;
+                    width: 100%;
+                    background-color: #22c55e;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 10px;
+                    cursor: pointer;
+                    font-weight: 600;
+                    transition: background-color 0.3s;
+                    text-decoration: none;
+                    text-align: center;
+                ">Lihat Detail Status</a>
+            </div>
+        </div>
+    </div>
     
     <script>
         // Smooth scrolling for anchor links
@@ -2414,63 +2495,20 @@
         });
     </script>
     <script>
-        // Show ping modal when button is clicked
-        document.getElementById('check-ping-btn').addEventListener('click', function() {
-            document.getElementById('ping-modal').style.display = 'flex';
-            simulatePing();
+        // Show notification modal when button is clicked
+        document.getElementById('check-status-btn').addEventListener('click', function(e) {
+            // Prevent default only if you want to show the modal instead of going to the URL
+            // e.preventDefault();
+            // document.getElementById('notification-modal').style.display = 'flex';
+            
+            // If you want the button to both show the modal AND go to the URL,
+            // you'd need to use a different approach
         });
         
-        // Close ping modal
-        function closePingModal() {
-            document.getElementById('ping-modal').style.display = 'none';
+        // Close notification modal
+        function closeNotificationModal() {
+            document.getElementById('notification-modal').style.display = 'none';
         }
-        
-        // Simulate ping process
-        function simulatePing() {
-            const pingResults = document.getElementById('ping-results');
-            pingResults.innerHTML = '<div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Menguji koneksi ke server...</span><span><i class="fas fa-spinner fa-spin"></i></span></div>';
-            
-            const websites = [
-                { name: "Server Utama", time: "45ms", status: "success" },
-                { name: "Database Server", time: "52ms", status: "success" },
-                { name: "API Gateway", time: "63ms", status: "success" },
-                { name: "CDN Server", time: "38ms", status: "success" }
-            ];
-            
-            let i = 0;
-            const pingInterval = setInterval(() => {
-                if (i < websites.length) {
-                    const site = websites[i];
-                    let colorClass = site.status === "success" ? "#22c55e" : site.status === "warning" ? "#f59e0b" : "#ef4444";
-                    let icon = site.status === "success" ? "check-circle" : site.status === "warning" ? "exclamation-triangle" : "times-circle";
-                    
-                    if (i === 0) {
-                        pingResults.innerHTML = '';
-                    }
-                    
-                    pingResults.innerHTML += `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #e9ecef;">
-                            <span>${site.name}</span>
-                            <span>
-                                ${site.time} <i class="fas fa-${icon}" style="color: ${colorClass}"></i>
-                            </span>
-                        </div>
-                    `;
-                    i++;
-                } else {
-                    clearInterval(pingInterval);
-                    pingResults.innerHTML += `
-                        <div style="text-align: center; margin-top: 10px; color: #22c55e;">
-                            <i class="fas fa-check-circle" style="margin-right: 5px;"></i>
-                            Semua server berfungsi normal
-                        </div>
-                    `;
-                }
-            }, 700);
-        }
-        
-        // Refresh ping when button is clicked
-        document.getElementById('refresh-ping-btn').addEventListener('click', simulatePing);
     </script>
 </body>
 </html>
