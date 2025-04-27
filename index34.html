@@ -2339,81 +2339,119 @@
     <!-- Add this code right after the opening <body> tag -->
 
 <!-- Notification Bar -->
-<div id="notification-bar" style="
-    background-color: #ffecb3;
-    border-bottom: 2px solid #ffc107;
-    color: #856404;
-    padding: 10px 0;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 2000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-">
-    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; align-items: center; flex: 1;">
-            <i class="fas fa-exclamation-triangle" style="margin-right: 10px; font-size: 20px;"></i>
-            <span><strong>PERINGATAN!</strong> Hati-hati terhadap ripper bernama Lexxy yang menawarkan akun game.</span>
-        </div>
-        <button id="see-more-btn" style="
-            background-color: #ffc107;
-            color: #856404;
-            border: none;
-            border-radius: 4px;
-            padding: 5px 15px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        ">Lihat Selengkapnya</button>
-    </div>
-</div>
-
-<!-- Notification Modal -->
-<div id="notification-modal" class="modal-overlay" style="z-index: 2001;">
-    <div class="modal-content" style="max-width: 600px;">
-        <div class="modal-header" style="background-color: #ffecb3; color: #856404;">
-            <div class="modal-close" onclick="closeNotificationModal()">&times;</div>
-            <h3 style="padding: 10px 0; text-align: center;">⚠️ PERINGATAN TERHADAP RIPPER ⚠️</h3>
-        </div>
-        <div class="modal-body" style="padding: 20px;">
-            <p style="margin-bottom: 15px;">Saya ingin menginformasikan kepada semua pengunjung website bahwa saya telah menemukan seseorang bernama <strong>Lexxy</strong> yang melakukan penipuan dengan modus berikut:</p>
-            
-            <p style="margin-bottom: 15px;"><strong>Modus penipuan yang dilakukan:</strong></p>
-            
-            <ul style="margin-bottom: 15px; padding-left: 20px;">
-                <li style="margin-bottom: 8px;">Menawarkan akun game <strong>Free Fire, PUBG,</strong> atau game lainnya secara gratis</li>
-                <li style="margin-bottom: 8px;">Kemudian meminta data akun Anda dengan alasan akan di-upgrade atau proses lainnya</li>
-                <li style="margin-bottom: 8px;">Pada akhirnya, akun Anda akan diambil alih oleh penipu tersebut</li>
-            </ul>
-            
-            <p style="margin-bottom: 15px;"><strong>Ingat:</strong></p>
-            
-            <ul style="margin-bottom: 15px; padding-left: 20px;">
-                <li style="margin-bottom: 8px;"><strong>JANGAN PERNAH</strong> memberikan detail akun game Anda kepada siapapun</li>
-                <li style="margin-bottom: 8px;"><strong>JANGAN PERCAYA</strong> penawaran akun game gratis dari siapapun</li>
-                <li style="margin-bottom: 8px;">Waspadalah terhadap penawaran yang terlalu bagus untuk menjadi kenyataan</li>
-            </ul>
-            
-            <p style="margin-bottom: 15px;">Jika Anda bertemu dengan Lexxy atau orang lain yang menawarkan akun game gratis dan meminta data akun Anda, jangan tanggapi dan laporkan kepada platform tempat Anda bertemu dengan mereka.</p>
-            
-            <button onclick="closeNotificationModal()" style="
-                width: 100%;
-                background-color: #ffc107;
-                color: #856404;
+    <div id="notification-bar" style="
+        background-color: #d4edda;
+        border-bottom: 2px solid #28a745;
+        color: #155724;
+        padding: 10px 0;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 2000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    ">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 90%;">
+            <div style="display: flex; align-items: center; flex: 1;">
+                <i class="fas fa-check-circle" style="margin-right: 10px; font-size: 20px;"></i>
+                <span><strong>INFORMASI!</strong> Website telah kembali online dan dapat diakses seperti biasa.</span>
+            </div>
+            <button id="check-ping-btn" style="
+                background-color: #28a745;
+                color: white;
                 border: none;
                 border-radius: 4px;
-                padding: 10px;
+                padding: 5px 15px;
                 cursor: pointer;
                 font-weight: 600;
-                transition: background-color 0.3s;
-            ">Saya Mengerti</button>
+            ">Cek Ping Website</button>
         </div>
     </div>
-</div>
+
+    <!-- Ping Check Modal -->
+    <div id="ping-modal" style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 2001;
+    ">
+        <div style="
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+        ">
+            <div style="
+                background-color: #d4edda;
+                color: #155724;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                position: relative;
+                padding: 10px;
+            ">
+                <span style="
+                    position: absolute;
+                    right: 15px;
+                    top: 10px;
+                    font-size: 24px;
+                    cursor: pointer;
+                " onclick="closePingModal()">&times;</span>
+                <h3 style="margin: 0; text-align: center;">Status Ping Website</h3>
+            </div>
+            
+            <div class="modal-body" style="padding: 20px;">
+                <p>Hasil pengujian koneksi ke website:</p>
+                
+                <div id="ping-results" style="
+                    background-color: #f8f9fa;
+                    border: 1px solid #dee2e6;
+                    border-radius: 4px;
+                    padding: 15px;
+                    margin: 15px 0;
+                    height: 150px;
+                    overflow-y: auto;
+                ">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Menguji koneksi ke server...</span>
+                        <span><i class="fas fa-spinner fa-spin"></i></span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button id="refresh-ping-btn" style="
+                        width: 50%;
+                        background-color: #28a745;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        padding: 10px;
+                        cursor: pointer;
+                        font-weight: 600;
+                    ">Refresh Ping</button>
+                    
+                    <button onclick="closePingModal()" style="
+                        width: 50%;
+                        background-color: #6c757d;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        padding: 10px;
+                        cursor: pointer;
+                        font-weight: 600;
+                    ">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <script>
         // Smooth scrolling for anchor links
@@ -2453,26 +2491,63 @@
         });
     </script>
     <script>
-    // Adjust navbar position due to notification bar
-    document.addEventListener('DOMContentLoaded', function() {
-        const notificationHeight = document.getElementById('notification-bar').offsetHeight;
-        const navbar = document.querySelector('.navbar');
-        const hero = document.querySelector('.hero');
+        // Show ping modal when button is clicked
+        document.getElementById('check-ping-btn').addEventListener('click', function() {
+            document.getElementById('ping-modal').style.display = 'flex';
+            simulatePing();
+        });
         
-        navbar.style.top = notificationHeight + 'px';
-        hero.style.paddingTop = (notificationHeight + 60) + 'px';
-    });
-    
-    // Notification modal functions
-    document.getElementById('see-more-btn').addEventListener('click', function() {
-        document.getElementById('notification-modal').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    });
-    
-    function closeNotificationModal() {
-        document.getElementById('notification-modal').classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-</script>
+        // Close ping modal
+        function closePingModal() {
+            document.getElementById('ping-modal').style.display = 'none';
+        }
+        
+        // Simulate ping process
+        function simulatePing() {
+            const pingResults = document.getElementById('ping-results');
+            pingResults.innerHTML = '<div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Menguji koneksi ke server...</span><span><i class="fas fa-spinner fa-spin"></i></span></div>';
+            
+            const websites = [
+                { name: "Server Utama", time: "45ms", status: "success" },
+                { name: "Database Server", time: "52ms", status: "success" },
+                { name: "API Gateway", time: "63ms", status: "success" },
+                { name: "CDN Server", time: "38ms", status: "success" }
+            ];
+            
+            let i = 0;
+            const pingInterval = setInterval(() => {
+                if (i < websites.length) {
+                    const site = websites[i];
+                    let colorClass = site.status === "success" ? "#28a745" : site.status === "warning" ? "#ffc107" : "#dc3545";
+                    let icon = site.status === "success" ? "check-circle" : site.status === "warning" ? "exclamation-triangle" : "times-circle";
+                    
+                    if (i === 0) {
+                        pingResults.innerHTML = '';
+                    }
+                    
+                    pingResults.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
+                            <span>${site.name}</span>
+                            <span>
+                                ${site.time} <i class="fas fa-${icon}" style="color: ${colorClass}"></i>
+                            </span>
+                        </div>
+                    `;
+                    i++;
+                } else {
+                    clearInterval(pingInterval);
+                    pingResults.innerHTML += `
+                        <div style="text-align: center; margin-top: 10px; color: #28a745;">
+                            <i class="fas fa-check-circle" style="margin-right: 5px;"></i>
+                            Semua server berfungsi normal
+                        </div>
+                    `;
+                }
+            }, 700);
+        }
+        
+        // Refresh ping when button is clicked
+        document.getElementById('refresh-ping-btn').addEventListener('click', simulatePing);
+    </script>
 </body>
 </html>
