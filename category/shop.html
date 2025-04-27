@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrianOfficial - Web Hosting</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Header style */
+        header {
+            background-color: #2c3e50;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .logo span {
+            color: #3498db;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        nav ul li a:hover {
+            color: #3498db;
+        }
+        
+        /* Main content */
+        .content {
+            min-height: calc(100vh - 80px);
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Glow effect elements */
+        .glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: 0;
+        }
+        
+        .glow-1 {
+            width: 300px;
+            height: 300px;
+            background: rgba(52, 152, 219, 0.3);
+            top: 10%;
+            left: 20%;
+            animation: float 10s ease-in-out infinite;
+        }
+        
+        .glow-2 {
+            width: 400px;
+            height: 400px;
+            background: rgba(155, 89, 182, 0.2);
+            bottom: 5%;
+            right: 15%;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(20px, 30px) rotate(5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        
+        /* Shop content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .page-title h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .page-title p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Pricing cards */
+        .pricing-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 350px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .pricing-card.popular::before {
+            content: "Paling Populer";
+            position: absolute;
+            top: 15px;
+            right: -30px;
+            background: linear-gradient(45deg, #ff6b6b, #ffb347);
+            color: white;
+            padding: 5px 40px;
+            font-size: 12px;
+            font-weight: 600;
+            transform: rotate(45deg);
+        }
+        
+        .pricing-card.popular {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.popular:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+        
+        .package-name {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .package-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            border-radius: 50%;
+            color: white;
+        }
+        
+        .starter-icon {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+        }
+        
+        .business-icon {
+            background: linear-gradient(135deg, #e74c3c, #f39c12);
+        }
+        
+        .premium-icon {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .enterprise-icon {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+        }
+        
+        .price {
+            display: block;
+            margin: 25px 0;
+        }
+        
+        .amount {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+        }
+        
+        .amount::before {
+            content: "Rp";
+            position: absolute;
+            left: -25px;
+            top: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .period {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .features {
+            list-style: none;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .features li {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+        }
+        
+        .features li i {
+            color: #2ecc71;
+            margin-right: 10px;
+        }
+        
+        .features li.not-included {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .features li.not-included i {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        .btn-starter {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: white;
+        }
+        
+        .btn-business {
+            background: linear-gradient(135deg, #e74c3c, #f39c12);
+            color: white;
+        }
+        
+        .btn-premium {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+        
+        .btn-enterprise {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* FAQ section */
+        .faq-section {
+            margin-top: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .section-title {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .faq-item {
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .faq-question i {
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #1a2530;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background: white;
+            color: #3498db;
+            transform: translateY(-3px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .page-title h1 {
+                font-size: 2.2rem;
+            }
+            
+            .pricing-card {
+                max-width: 100%;
+            }
+            
+            .faq-section {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Brian<span>Official</span></div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About Me</a></li>
+                <li><a href="#">Projects</a></li>
+                <li><a href="#">Income</a></li>
+                <li><a href="#">Connect</a></li>
+                <li><a href="#">Check Hubungan</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main class="content">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        
+        <div class="container">
+            <div class="page-title">
+                <h1>Layanan Web Hosting Terbaik</h1>
+                <p>Website cepat, aman, dan handal dengan dukungan teknis 24/7. Pilih paket yang sesuai dengan kebutuhan Anda.</p>
+            </div>
+            
+            <div class="pricing-cards">
+                <!-- Paket Starter -->
+                <div class="pricing-card">
+                    <div class="package-icon starter-icon"><i class="fas fa-rocket"></i></div>
+                    <h3 class="package-name">Starter</h3>
+                    <div class="price">
+                        <div class="amount">49.000</div>
+                        <div class="period">/bulan</div>
+                    </div>
+                    <ul class="features">
+                        <li><i class="fas fa-check-circle"></i> 1 Website</li>
+                        <li><i class="fas fa-check-circle"></i> 5 GB SSD Storage</li>
+                        <li><i class="fas fa-check-circle"></i> 20 GB Bandwidth</li>
+                        <li><i class="fas fa-check-circle"></i> 5 Email Accounts</li>
+                        <li><i class="fas fa-check-circle"></i> Free SSL Certificate</li>
+                        <li class="not-included"><i class="fas fa-times-circle"></i> Daily Backup</li>
+                        <li class="not-included"><i class="fas fa-times-circle"></i> CDN Protection</li>
+                        <li class="not-included"><i class="fas fa-times-circle"></i> Priority Support</li>
+                    </ul>
+                    <a href="#" class="btn btn-starter">Pilih Paket</a>
+                </div>
+                
+                <!-- Paket Business -->
+                <div class="pricing-card popular">
+                    <div class="package-icon business-icon"><i class="fas fa-briefcase"></i></div>
+                    <h3 class="package-name">Business</h3>
+                    <div class="price">
+                        <div class="amount">99.000</div>
+                        <div class="period">/bulan</div>
+                    </div>
+                    <ul class="features">
+                        <li><i class="fas fa-check-circle"></i> 5 Website</li>
+                        <li><i class="fas fa-check-circle"></i> 20 GB SSD Storage</li>
+                        <li><i class="fas fa-check-circle"></i> 100 GB Bandwidth</li>
+                        <li><i class="fas fa-check-circle"></i> 25 Email Accounts</li>
+                        <li><i class="fas fa-check-circle"></i> Free SSL Certificate</li>
+                        <li><i class="fas fa-check-circle"></i> Daily Backup</li>
+                        <li><i class="fas fa-check-circle"></i> CDN Protection</li>
+                        <li class="not-included"><i class="fas fa-times-circle"></i> Priority Support</li>
+                    </ul>
+                    <a href="#" class="btn btn-business">Pilih Paket</a>
+                </div>
+                
+                <!-- Paket Premium -->
+                <div class="pricing-card">
+                    <div class="package-icon premium-icon"><i class="fas fa-crown"></i></div>
+                    <h3 class="package-name">Premium</h3>
+                    <div class="price">
+                        <div class="amount">199.000</div>
+                        <div class="period">/bulan</div>
+                    </div>
+                    <ul class="features">
+                        <li><i class="fas fa-check-circle"></i> 20 Website</li>
+                        <li><i class="fas fa-check-circle"></i> 50 GB SSD Storage</li>
+                        <li><i class="fas fa-check-circle"></i> Unlimited Bandwidth</li>
+                        <li><i class="fas fa-check-circle"></i> 100 Email Accounts</li>
+                        <li><i class="fas fa-check-circle"></i> Free SSL Certificate</li>
+                        <li><i class="fas fa-check-circle"></i> Daily Backup</li>
+                        <li><i class="fas fa-check-circle"></i> CDN Protection</li>
+                        <li><i class="fas fa-check-circle"></i> Priority Support</li>
+                    </ul>
+                    <a href="#" class="btn btn-premium">Pilih Paket</a>
+                </div>
+                
+                <!-- Paket Enterprise -->
+                <div class="pricing-card">
+                    <div class="package-icon enterprise-icon"><i class="fas fa-building"></i></div>
+                    <h3 class="package-name">Enterprise</h3>
+                    <div class="price">
+                        <div class="amount">499.000</div>
+                        <div class="period">/bulan</div>
+                    </div>
+                    <ul class="features">
+                        <li><i class="fas fa-check-circle"></i> Unlimited Website</li>
+                        <li><i class="fas fa-check-circle"></i> 200 GB SSD Storage</li>
+                        <li><i class="fas fa-check-circle"></i> Unlimited Bandwidth</li>
+                        <li><i class="fas fa-check-circle"></i> Unlimited Email Accounts</li>
+                        <li><i class="fas fa-check-circle"></i> Free SSL Certificate</li>
+                        <li><i class="fas fa-check-circle"></i> Hourly Backup</li>
+                        <li><i class="fas fa-check-circle"></i> Enhanced Security</li>
+                        <li><i class="fas fa-check-circle"></i> Dedicated Support 24/7</li>
+                    </ul>
+                    <a href="#" class="btn btn-enterprise">Hubungi Kami</a>
+                </div>
+            </div>
+            
+            <!-- FAQ Section -->
+            <div class="faq-section">
+                <h2 class="section-title">Pertanyaan Umum</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Apa itu web hosting? <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Web hosting adalah layanan yang memungkinkan individu dan organisasi untuk mempublikasikan website atau aplikasi web mereka di internet. Layanan hosting menyediakan teknologi dan layanan yang diperlukan agar website dapat diakses melalui World Wide Web.</p>
+                        <br>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Bagaimana cara memilih paket hosting yang tepat? <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Untuk memilih paket hosting yang tepat, pertimbangkan jenis website yang akan Anda buat, perkiraan jumlah pengunjung, kebutuhan ruang penyimpanan, dan fitur tambahan yang Anda perlukan. Paket Starter cocok untuk blog pribadi atau website portofolio, sementara Business atau Premium lebih cocok untuk toko online atau website perusahaan.</p>
+                        <br>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Apa itu SSL Certificate? <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>SSL (Secure Sockets Layer) Certificate adalah teknologi keamanan yang menciptakan koneksi terenkripsi antara server web dan browser. Ini penting untuk mengamankan data sensitif, seperti informasi pribadi dan detail pembayaran. Semua paket hosting kami menyertakan SSL gratis untuk keamanan website Anda.</p>
+                        <br>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Bagaimana jika saya perlu pindah dari penyedia hosting lain? <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Kami menyediakan layanan migrasi website gratis untuk semua paket hosting. Tim teknis kami akan membantu memindahkan website Anda dari penyedia hosting lain ke server kami tanpa downtime. Proses ini mencakup transfer file, database, dan konfigurasi email.</p>
+                        <br>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Apakah ada jaminan uang kembali? <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Ya, kami menawarkan jaminan uang kembali 30 hari untuk semua paket hosting. Jika Anda tidak puas dengan layanan kami dalam 30 hari pertama, Anda dapat meminta pengembalian dana penuh. Ini memberikan Anda kesempatan untuk mencoba layanan kami tanpa risiko.</p>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="logo">Brian<span>Official</span></div>
+            
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                <a href="#" class="social-link"><i class="far fa-envelope"></i></a>
+            </div>
+            
+            <p>&copy; 2025 BrianOfficial. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // FAQ accordion functionality
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('i');
+                
+                // Toggle answer visibility
+                if (answer.style.maxHeight) {
+                    answer.style.maxHeight = null;
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
