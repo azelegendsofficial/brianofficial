@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrianOfficial - Maintenance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Header style seperti pada gambar */
+        header {
+            background-color: #2c3e50;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .logo span {
+            color: #3498db;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        nav ul li a:hover {
+            color: #3498db;
+        }
+        
+        /* Main content dengan gradient seperti pada gambar */
+        .content {
+            min-height: calc(100vh - 80px);
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Glow effect elements */
+        .glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: 0;
+        }
+        
+        .glow-1 {
+            width: 300px;
+            height: 300px;
+            background: rgba(52, 152, 219, 0.3);
+            top: 10%;
+            left: 20%;
+            animation: float 10s ease-in-out infinite;
+        }
+        
+        .glow-2 {
+            width: 400px;
+            height: 400px;
+            background: rgba(155, 89, 182, 0.2);
+            bottom: 5%;
+            right: 15%;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(20px, 30px) rotate(5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        
+        /* Main content wrapper */
+        .container {
+            text-align: center;
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: rgba(231, 76, 60, 0.2);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 25px;
+            line-height: 1.2;
+        }
+        
+        .description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .highlight {
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff6b6b, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 1.4rem;
+            position: relative;
+            display: inline-block;
+            padding: 5px 0;
+        }
+        
+        .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(45deg, #ff6b6b, #ffb347);
+            border-radius: 3px;
+        }
+        
+        .countdown-container {
+            margin: 40px 0;
+        }
+        
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .countdown-block {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            min-width: 80px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .countdown-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .countdown-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #2ecc71;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.4);
+        }
+        
+        .situation-animation {
+            margin: 40px 0;
+            height: 100px;
+            position: relative;
+        }
+        
+        .emoji {
+            font-size: 3rem;
+            position: absolute;
+        }
+        
+        .emoji-left {
+            left: 30%;
+            animation: shake-left 2s ease-in-out infinite;
+        }
+        
+        .emoji-right {
+            right: 30%;
+            animation: shake-right 2s ease-in-out infinite;
+        }
+        
+        .emoji-vs {
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        @keyframes shake-left {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            25% { transform: translateX(10px) rotate(5deg); }
+            50% { transform: translateX(-5px) rotate(-5deg); }
+            75% { transform: translateX(5px) rotate(3deg); }
+        }
+        
+        @keyframes shake-right {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            25% { transform: translateX(-10px) rotate(-5deg); }
+            50% { transform: translateX(5px) rotate(5deg); }
+            75% { transform: translateX(-5px) rotate(-3deg); }
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background: white;
+            color: #3498db;
+            transform: translateY(-3px);
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .description {
+                font-size: 1rem;
+            }
+            
+            .highlight {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Brian<span>Official</span></div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About Me</a></li>
+                <li><a href="#">Projects</a></li>
+                <li><a href="#">Income</a></li>
+                <li><a href="#">Connect</a></li>
+                <li><a href="#">Check Hubungan</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main class="content">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        
+        <div class="container">
+            <div class="status-badge">WEBSITE SEDANG OFFLINE</div>
+            
+            <h1>Website Sedang Dalam Pemeliharaan</h1>
+            
+            <p class="description">
+                Mohon maaf atas ketidaknyamanan ini. Saat ini website harus ditutup sementara karena
+                <span class="highlight">ORANG TUA SAYA SEDANG BERKELAHI!</span>
+                <br>Kami akan kembali setelah situasi keluarga membaik.
+            </p>
+            
+            <div class="situation-animation">
+                <div class="emoji emoji-left">👨</div>
+                <div class="emoji emoji-vs">VS</div>
+                <div class="emoji emoji-right">👩</div>
+            </div>
+            
+            <div class="countdown-container">
+                <div class="countdown">
+                    <div class="countdown-block">
+                        <div class="countdown-number" id="days">07</div>
+                        <div class="countdown-label">Hari</div>
+                    </div>
+                    <div class="countdown-block">
+                        <div class="countdown-number" id="hours">00</div>
+                        <div class="countdown-label">Jam</div>
+                    </div>
+                    <div class="countdown-block">
+                        <div class="countdown-number" id="minutes">00</div>
+                        <div class="countdown-label">Menit</div>
+                    </div>
+                    <div class="countdown-block">
+                        <div class="countdown-number" id="seconds">00</div>
+                        <div class="countdown-label">Detik</div>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="#" class="btn">Dapatkan Notifikasi</a>
+            
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                <a href="#" class="social-link"><i class="far fa-envelope"></i></a>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // Set tanggal countdown 1 minggu dari sekarang
+        const now = new Date();
+        const targetDate = new Date(now);
+        targetDate.setDate(now.getDate() + 7); // 1 minggu
+        
+        function updateCountdown() {
+            const currentTime = new Date();
+            const difference = targetDate - currentTime;
+            
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+            
+            if (difference < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                
+                document.querySelector('.status-badge').textContent = 'WEBSITE SEGERA ONLINE';
+                document.querySelector('.status-badge').style.background = 'rgba(46, 204, 113, 0.2)';
+                document.querySelector('.status-badge').style.borderColor = 'rgba(46, 204, 113, 0.4)';
+            }
+        }
+        
+        // Update setiap detik
+        const countdownInterval = setInterval(updateCountdown, 1000);
+        
+        // Initialize
+        updateCountdown();
+    </script>
+</body>
+</html>
